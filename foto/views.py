@@ -19,4 +19,4 @@ def category(request, category_id):
         'categories': categories,
         'category_id': category_id,
     }
-    return render(request, 'blog/cat.html', context)
+    return render(request, 'foto/cat.html', context)

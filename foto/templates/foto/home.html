@@ -1,14 +1,17 @@
 {% extends 'foto/base.html' %}
 {% block title %} Home Page{% endblock%}
 {% block main_content %}
-{% for foto in Fotos %}
+{% for item in Fotos %}
+  <div class="col-md-3">
     <div class="card" style="width: 18rem;">
-  <img src="..." class="card-img-top" alt="...">
+  <img src="{{ item.images.url }}" class="card-img-top" alt="{{ item.title}}">
   <div class="card-body">
-    <h5 class="card-title">{{ foto.title}}</h5>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    <h5 class="card-title">{{ item.title }}</h5>
+    <!--<p class="card-text">{{ item.description|truncatechars:100 }}</p>-->
+    <p class="card-text">{{ item.description|truncatechars:100 }}</p>
     <a href="#" class="btn btn-primary">Go somewhere</a>
   </div>
+</div>
 </div>
 {% endfor %}
 {% endblock%}
