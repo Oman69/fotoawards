@@ -5,7 +5,8 @@ from .models import Foto, Category
 
 def home(request):
     fotos = Foto.objects.all()
-    context = {'Fotos': fotos}
+    categories = Category.objects.all()
+    context = {'Fotos': fotos, 'categories': categories}
     return render(request, 'foto/home.html', context)
 
 
