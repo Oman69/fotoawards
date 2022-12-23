@@ -1,0 +1,18 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="todo.views.signup_user" />
+          <option value="todo_project_folder.todo_project.urls.todo" />
+          <option value="advokat.blog.models.Blogs.objects" />
+          <option value="tests.calc_test.*" />
+          <option value="todolist.todolist.urls.todo" />
+          <option value="tasks_S_n_P.tests.task_02_tests.*" />
+          <option value="tasks_S_n_P.tests.task_11_tests.task_11" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
