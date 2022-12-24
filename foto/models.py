@@ -1,3 +1,6 @@
+from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
@@ -12,6 +15,7 @@ class Foto(models.Model):
     affected = models.BooleanField(default=False, verbose_name='Одобрено модератором')
     images = models.ImageField(upload_to='media')
     voices = models.IntegerField(default=0)
+    comments = models.IntegerField(default=0)
 
 
     def __str__(self):
@@ -25,3 +29,26 @@ class Category(models.Model):
 
     def __str__(self):
         return self.title
+
+
+
+class Voices(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             related_name='voices',
+                             on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    def __str__(self):
+        return self.user
+
+
+
+
+class Comments(models.Model):
+    count = models.IntegerField(default=0)
+    text = models.TextField(max_length=150, null=True)
+
+    def __str__(self):
+        return self.text

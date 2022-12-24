@@ -1,3 +1,38 @@
-.mg-30 {
-    padding: 30px
+.non_a > a {
+    color: var(--bs-body-color);
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.non_a > a:hover {
+    font-weight: 700;
+}
+
+.mg-h-10 {
+    margin: 10px 0;
+}
+
+.card-img-top {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.mask {
+    position: absolute;
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    height: 286px;
+    overflow: hidden;
+    opacity: 0;
+    display:flex;
+    align-items: center;
+    transition: 0.3s;
+    border-radius: 5px;
+}
+
+.mask:hover {
+    opacity: 1;
 }

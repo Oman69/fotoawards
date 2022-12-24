@@ -1,3 +1,16 @@
+.non_a > a {
+    color: var(--bs-body-color);
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.non_a > a:hover {
+    font-weight: 700;
+}
+
+.mg-h-10 {
+    margin: 10px 0;
+}
 
 .card-img-top {
     position: relative;
