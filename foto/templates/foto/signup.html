@@ -1,0 +1,13 @@
+{% extends 'foto/auth_base.html' %}
+{% load static %}
+{% block title %} Страница регистрации пользователя {% endblock %}
+{% block h1 %} Введите данные для регистрации: {% endblock %}
+{% block main_content %}
+    <span style="color:red; font-weight: bold">{{ error }}</span>
+    <form method="POST">
+        {% csrf_token %}
+       {{form.as_p}}
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+
+{% endblock %}

@@ -43,7 +43,7 @@
         {% if user.is_authenticated %}
         <div class="user_block">
             <p>Привет, {{user.username}}!</p>
-    <form action="{% url 'logout_user' %}" method ='POST'>
+    <form action="#" method ='POST'>
         {% csrf_token %}
         <button type="submit" class="btn btn-light">Выйти</button>
     </form>
@@ -52,36 +52,17 @@
 
     {% else %}
     <div class="user_block">
-        <a href="{% url 'login_user' %}"><button class="btn btn-light">Войти</button></a>
-        <a href="#"><button class="btn btn-light">Регистрация</button></a>
+        <a href="{% url 'login_user' %}"><button class="btn btn-light">LogIn</button></a>
+        <a href="#"><button class="btn btn-light">Registration</button></a>
     </div>
     {% endif %}
     </div>
   </div>
 </nav>
     <div class="container-fluid">
-
-
-
-
-      <div class="row p-4">
-          <div class="col-md-2">
-              <ul class="list-group list-group-flush">
-                  {% for item in categories %}
-                  <li class="list-group-item non_a"><a href="{% url 'category' item.pk %}">{{ item.title }}</a></li>
-                  {% endfor%}
-                </ul>
-
-          </div>
-          <div class="col-md-10">
-              <h1>{% block h1%}Base H1{%endblock%}</h1>
-              <div class="row p-4">
+              <h1>{% block h1 %} BASE H1 {% endblock %}</h1>
               {% block main_content %}
                 {% endblock %}
               </div>
-          </div>
-
-        </div>
-    </div>
 </body>
 </html>

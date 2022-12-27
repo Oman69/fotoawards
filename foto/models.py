@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.contrib.auth.models import User
@@ -13,13 +13,16 @@ class Foto(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор')
     category = models.ForeignKey('Category', on_delete=models.DO_NOTHING, verbose_name='Категория')
     affected = models.BooleanField(default=False, verbose_name='Одобрено модератором')
-    images = models.ImageField(upload_to='media')
-    voices = models.IntegerField(default=0)
-    comments = models.IntegerField(default=0)
+    images = models.ImageField(upload_to='media', verbose_name='Фотография')
+    voices = models.ManyToManyField(User, related_name='foto_voices', verbose_name='Голоса', blank=True, null=True)
+    comments = models.ManyToManyField(User, related_name='foto_comments',  verbose_name='Комментарии', blank=True, null=True)
 
 
     def __str__(self):
         return self.title
+
+    def total_voices(self):
+        return self.voices.count()
 
 
 
@@ -33,22 +36,10 @@ class Category(models.Model):
 
 
 class Voices(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             related_name='voices',
-                             on_delete=models.CASCADE)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-
-    def __str__(self):
-        return self.user
+    pass
 
 
 
 
 class Comments(models.Model):
-    count = models.IntegerField(default=0)
-    text = models.TextField(max_length=150, null=True)
-
-    def __str__(self):
-        return self.text
+    pass

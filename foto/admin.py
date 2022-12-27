@@ -6,5 +6,3 @@ from foto.models import Foto, Category, Voices, Comments
 
 admin.site.register(Foto)
 admin.site.register(Category)
-admin.site.register(Voices)
-admin.site.register(Comments)

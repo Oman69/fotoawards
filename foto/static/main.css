@@ -8,6 +8,13 @@
     font-weight: 700;
 }
 
+
+.user_block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 10px
+}
+
 .mg-h-10 {
     margin: 10px 0;
 }
@@ -35,4 +42,9 @@
 
 .mask:hover {
     opacity: 1;
+}
+
+
+.btn-light {
+    border: 1px solid #ADAEAF;
 }
