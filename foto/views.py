@@ -32,10 +32,14 @@ def foto(request, foto_id):
     categories = Category.objects.all()
     stuff = get_object_or_404(Foto, id=foto_id.pk)
     total_voices = stuff.total_voices()
+    liked = False
+    if stuff.voices.filter(id=request.user.id):
+        liked = True
     context = {
         'categories': categories,
         'foto_id': foto_id,
-        'total_voices': total_voices
+        'total_voices': total_voices,
+        'liked': liked,
     }
     return render(request, 'foto/foto.html', context)
 
@@ -43,8 +47,13 @@ def foto(request, foto_id):
 
 def like(request, foto_id):
     foto_id = get_object_or_404(Foto, id=request.POST.get('foto_id'))
-    liked = True
-    foto_id.voices.add(request.user)
+    liked = False
+    if foto_id.voices.filter(id=request.user.id).exists():
+        foto_id.voices.remove(request.user)
+        liked = False
+    else:
+        foto_id.voices.add(request.user)
+        liked = True
     return HttpResponseRedirect(reverse('foto', args=[str(foto_id.pk)]))
 
 

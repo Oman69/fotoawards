@@ -25,7 +25,9 @@ urlpatterns = [
     path('category/<int:category_id>/', views.category, name='category'),
     path('<int:foto_id>/', views.foto, name='foto'),
     path('like/<int:foto_id>/', views.like, name='foto_like'),
-    path('login/', views.login_user, name='login_user'),
-    path('logout/', views.logout_user, name='logout_user'),
+    #path('login/', views.login_user, name='login_user'),
+    #path('logout/', views.logout_user, name='logout_user'),
+    path('accounts/', include('allauth.urls')),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

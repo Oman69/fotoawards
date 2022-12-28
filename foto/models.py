@@ -24,6 +24,13 @@ class Foto(models.Model):
     def total_voices(self):
         return self.voices.count()
 
+    def total_comments(self):
+        return self.comments.count()
+
+    class Meta:
+        verbose_name = 'Фото'
+        verbose_name_plural = 'Фотографии'
+
 
 
 class Category(models.Model):
@@ -33,10 +40,9 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
-
-
-class Voices(models.Model):
-    pass
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
 
 

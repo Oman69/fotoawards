@@ -42,8 +42,12 @@
       </form>-->
         {% if user.is_authenticated %}
         <div class="user_block">
-            <p>Привет, {{user.username}}!</p>
-    <form action="{% url 'logout_user' %}" method ='POST'>
+            {% if user.first_name %}
+            <p>Привет,  {{user.first_name}}!</p>
+            {% else %}
+            <p>Привет,  {{user.username}}!</p>
+            {% endif %}
+    <form action="{% url 'account_logout' %}" method ='POST'>
         {% csrf_token %}
         <button type="submit" class="btn btn-light">Выйти</button>
     </form>
@@ -52,8 +56,8 @@
 
     {% else %}
     <div class="user_block">
-        <a href="{% url 'login_user' %}"><button class="btn btn-light">Войти</button></a>
-        <a href="#"><button class="btn btn-light">Регистрация</button></a>
+        <a href="{% url 'account_login' %}"><button class="btn btn-light">Войти</button></a>
+        <a href="{% url 'account_signup' %}"><button class="btn btn-light">Регистрация</button></a>
     </div>
     {% endif %}
     </div>
