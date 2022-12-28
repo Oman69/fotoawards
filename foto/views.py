@@ -1,7 +1,9 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Foto, Category
+
+from .forms import FotoForm
+from .models import Foto, Category, Comments
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 # Create your views here.
@@ -30,6 +32,7 @@ def category(request, category_id):
 def foto(request, foto_id):
     foto_id = Foto.objects.get(pk=foto_id)
     categories = Category.objects.all()
+    comments = Comments.objects.filter(id=foto_id.pk)
     stuff = get_object_or_404(Foto, id=foto_id.pk)
     total_voices = stuff.total_voices()
     liked = False
@@ -40,6 +43,7 @@ def foto(request, foto_id):
         'foto_id': foto_id,
         'total_voices': total_voices,
         'liked': liked,
+        'comments': comments,
     }
     return render(request, 'foto/foto.html', context)
 
@@ -57,20 +61,24 @@ def like(request, foto_id):
     return HttpResponseRedirect(reverse('foto', args=[str(foto_id.pk)]))
 
 
+def user(request):
+    filter_foto = Foto.objects.filter(user=request.user)
+    categories = Category.objects.all()
+    context = {'Fotos': filter_foto, 'categories': categories}
+    return render(request, 'foto/user.html', context)
 
-def login_user(request):
+
+
+#Добавить фотографию
+def add_foto(request):
     if request.method == 'GET':
-        return render(request, 'foto/login.html', {'form': AuthenticationForm()})
+        return render(request, 'foto/add_foto.html', {'form': FotoForm()})
     else:
-        user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
-        if user is None:
-            return render(request, 'foto/login.html', {'form': AuthenticationForm(), 'error': 'Пользователь с такими данными не найден'})
-        else:
-            login(request, user)
-            return redirect('home')
-
-
-def logout_user(request):
-    if request.method == 'POST':
-        logout(request)
-        return redirect('home')
+        try:
+            form = FotoForm(request.POST, request.FILES)
+            newfoto = form.save(commit=False)
+            newfoto.user = request.user
+            newfoto.save()
+            return redirect('user')
+        except ValueError:
+            return render(request, 'foto/add_foto.html', {'form': FotoForm(), 'error': 'Ошибка при загрузке'})

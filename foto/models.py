@@ -11,11 +11,11 @@ class Foto(models.Model):
     description = models.TextField(max_length=1000, verbose_name='Описание', blank=True, null=True)
     add_data = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления')
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор')
-    category = models.ForeignKey('Category', on_delete=models.DO_NOTHING, verbose_name='Категория')
+    category = models.ForeignKey('Category', on_delete=models.DO_NOTHING, verbose_name='Категория', default='Без категории')
     affected = models.BooleanField(default=False, verbose_name='Одобрено модератором')
     images = models.ImageField(upload_to='media', verbose_name='Фотография')
-    voices = models.ManyToManyField(User, related_name='foto_voices', verbose_name='Голоса', blank=True, null=True)
-    comments = models.ManyToManyField(User, related_name='foto_comments',  verbose_name='Комментарии', blank=True, null=True)
+    voices = models.ManyToManyField(User, related_name='foto_voices', verbose_name='Голоса', blank=True)
+    #comments = models.ManyToManyField(User, related_name='foto_comments',  verbose_name='Комментарии', blank=True, null=True)
 
 
     def __str__(self):
@@ -24,8 +24,6 @@ class Foto(models.Model):
     def total_voices(self):
         return self.voices.count()
 
-    def total_comments(self):
-        return self.comments.count()
 
     class Meta:
         verbose_name = 'Фото'
@@ -48,4 +46,16 @@ class Category(models.Model):
 
 
 class Comments(models.Model):
-    pass
+    text = models.TextField(max_length=500, verbose_name='Текст комментария')
+    foto = models.ForeignKey(Foto, on_delete=models.CASCADE, verbose_name='Фото комментария')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор комментария')
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Дата комментария')
+    approved = models.BooleanField(default=False, verbose_name='Одобрено модератором')
+
+
+    def __str__(self):
+        return self.text
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'

@@ -23,11 +23,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
     path('category/<int:category_id>/', views.category, name='category'),
-    path('<int:foto_id>/', views.foto, name='foto'),
+    path('foto/<int:foto_id>/', views.foto, name='foto'),
     path('like/<int:foto_id>/', views.like, name='foto_like'),
-    #path('login/', views.login_user, name='login_user'),
-    #path('logout/', views.logout_user, name='logout_user'),
     path('accounts/', include('allauth.urls')),
+    path('user/', views.user, name='user'),
+    path('add/', views.add_foto, name='add_foto'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

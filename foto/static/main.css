@@ -12,11 +12,11 @@
 .user_block {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-column-gap: 10px
+    grid-column-gap: 10px;
 }
 
 .mg-h-10 {
-    margin: 10px 0;
+    margin: 20px 0;
 }
 
 .card-img-top {
@@ -32,6 +32,8 @@
     color: #fff;
     background: rgba(0, 0, 0, 0.5);
     height: 286px;
+    width: 100%;
+    justify-content: center;
     overflow: hidden;
     opacity: 0;
     display:flex;
@@ -47,4 +49,19 @@
 
 .btn-light {
     border: 1px solid #ADAEAF;
+}
+
+
+.pagination {
+margin: 20px 0;
+}
+
+.after-text {
+    display: grid;
+    grid-template-columns: 4fr 2fr 1fr 2fr 2fr;
+    grid-column-gap: 10px;
+}
+
+.comments {
+    margin: 0px 0 30px 30px;
 }
