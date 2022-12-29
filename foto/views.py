@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, get_object_or_404, redirect
 
-from .forms import FotoForm
+from .forms import FotoForm, CommentsForm
 from .models import Foto, Category, Comments
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -30,22 +30,45 @@ def category(request, category_id):
 
 
 def foto(request, foto_id):
-    foto_id = Foto.objects.get(pk=foto_id)
-    categories = Category.objects.all()
-    comments = Comments.objects.filter(id=foto_id.pk)
-    stuff = get_object_or_404(Foto, id=foto_id.pk)
-    total_voices = stuff.total_voices()
-    liked = False
-    if stuff.voices.filter(id=request.user.id):
-        liked = True
-    context = {
-        'categories': categories,
-        'foto_id': foto_id,
-        'total_voices': total_voices,
-        'liked': liked,
-        'comments': comments,
-    }
-    return render(request, 'foto/foto.html', context)
+    if request.method == 'GET':
+        foto_id = Foto.objects.get(pk=foto_id)
+        categories = Category.objects.all()
+        stuff = get_object_or_404(Foto, id=foto_id.pk)
+        total_voices = stuff.total_voices()
+        liked = False
+        if stuff.voices.filter(id=request.user.id):
+            liked = True
+        context = {
+            'categories': categories,
+            'foto_id': foto_id,
+            'total_voices': total_voices,
+            'liked': liked,
+            'form': CommentsForm(),
+        }
+        return render(request, 'foto/foto.html', context)
+    else:
+        try:
+            form = CommentsForm(request.POST)
+            newcomment = form.save(commit=False)
+            newcomment.user = request.user
+            newcomment.foto_id = foto_id
+            newcomment.save()
+            print('Form is working...')
+            return redirect('user')
+        except ValueError:
+            return render(request, 'foto/foto.html', {'form': CommentsForm(), 'error': 'Ошибка'})
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -82,3 +105,20 @@ def add_foto(request):
             return redirect('user')
         except ValueError:
             return render(request, 'foto/add_foto.html', {'form': FotoForm(), 'error': 'Ошибка при загрузке'})
+
+
+
+def add_comment(request,foto_id):
+    if request.method == 'GET':
+        return render(request, 'foto/add_comment.html', {'form': CommentsForm()})
+    else:
+        try:
+            form = CommentsForm(request.POST)
+            newcomment = form.save(commit=False)
+            newcomment.user = request.user
+            newcomment.foto_id = foto_id
+            newcomment.save()
+            print('Form is working...')
+            return redirect('user')
+        except ValueError:
+            return render(request, 'foto/add_comment.html', {'form': CommentsForm(), 'error': 'Ошибка'})

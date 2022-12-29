@@ -28,6 +28,6 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('user/', views.user, name='user'),
     path('add/', views.add_foto, name='add_foto'),
-
+    path('foto/<int:foto_id>/add-comment/', views.add_comment, name='add_comment'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
