@@ -47,9 +47,13 @@
         {% for item in foto_id.comments.all %}
         <h6>{{ item.user }} - {{ item.created|date:'SHORT_DATETIME_FORMAT' }}</h6>
         <p>{{ item.text }} </p>
+        {% if item.user == request.user %}
+        <a href="{% url 'delete_comment' item.pk %}"> Удалить </a>
+        {% endif %}
+        <br>
         {% endfor %}
         {% endif %}
-
+        <br>
         <!--Add Comment-->
         {% if user.is_authenticated %}
         <a href="#popup_1" >Оставить комментарий</a>

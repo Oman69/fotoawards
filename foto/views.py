@@ -60,15 +60,12 @@ def foto(request, foto_id):
 
 
 
-
-
-
-
-
-
-
-
-
+def delete_comment(request, foto_id):
+    comment = get_object_or_404(Comments, pk=foto_id, user=request.user)
+    if request.method == 'GET':
+        comment.delete()
+        return redirect('user')
+        #return HttpResponseRedirect(reverse('foto', args=[str(foto)]))
 
 
 

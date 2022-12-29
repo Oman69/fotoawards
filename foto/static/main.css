@@ -1,3 +1,7 @@
+p {
+    margin-bottom: 0;
+}
+
 .non_a > a {
     color: var(--bs-body-color);
     text-decoration: none;
