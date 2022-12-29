@@ -39,11 +39,20 @@
     </div>
 
     <div class="comments">
-        <h4 class="mg-h-10">Комментарии: {{ comments.count }}</h4>
-        {% for item in comments%}
-        <h6> {{ item.created }} {{ item.user }}</h6>
+        <hr>
+        {% if not foto_id.comments.all %}
+        <h4>Пока нет комментариев...</h4>
+        {% else %}
+        <h4 class="mg-h-10">Комментарии: {{ foto_id.comments.count }}</h4>
+        {% for item in foto_id.comments.all %}
+        <h6>{{ item.user }} - {{ item.created|date:'SHORT_DATETIME_FORMAT' }}</h6>
         <p>{{ item.text }} </p>
+
         {% endfor %}
+        {% endif %}
+        <br>
+        <hr>
+
     </div>
 
 

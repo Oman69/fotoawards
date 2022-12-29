@@ -47,7 +47,7 @@ class Category(models.Model):
 
 class Comments(models.Model):
     text = models.TextField(max_length=500, verbose_name='Текст комментария')
-    foto = models.ForeignKey(Foto, on_delete=models.CASCADE, verbose_name='Фото комментария')
+    foto = models.ForeignKey(Foto, on_delete=models.CASCADE, related_name='comments', verbose_name='Фото комментария')
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор комментария')
     created = models.DateTimeField(auto_now_add=True, verbose_name='Дата комментария')
     approved = models.BooleanField(default=False, verbose_name='Одобрено модератором')
