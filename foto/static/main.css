@@ -20,7 +20,18 @@ p {
 }
 
 .mg-h-10 {
-    margin: 20px 0;
+    margin: 20px 0 10px 0;
+}
+
+.search {
+    display: grid;
+    grid-temple-rows: 1fr 1fr;
+    grid-gap: 10px;
+}
+
+
+.card {
+    margin-bottom: 30px;
 }
 
 .card-img-top {

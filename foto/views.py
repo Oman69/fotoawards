@@ -1,18 +1,31 @@
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, get_object_or_404, redirect
-
+from django.db.models import Q
 from .forms import FotoForm, CommentsForm
 from .models import Foto, Category, Comments
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # Create your views here.
+PRODUCTS_PER_PAGE = 4
 
+def home(request, sort=1):
 
-def home(request):
-    fotos = Foto.objects.all()
+    sort_voices = request.GET.get('voices', '')
+    sort_comments = request.GET.get('comments', '')
+    sort_date = request.GET.get('date', '')
+
     categories = Category.objects.all()
-    context = {'Fotos': fotos, 'categories': categories}
+    orders = ['voices', 'add_data']
+    fotos = Foto.objects.order_by(orders[sort])
+    page = request.GET.get('page', 1)
+    product_paginator = Paginator(fotos, PRODUCTS_PER_PAGE)
+    try:
+        fotos = product_paginator.page(page)
+    except EmptyPage:
+        fotos = product_paginator.page(product_paginator.num_pages)
+    except:
+        fotos = product_paginator.page(PRODUCTS_PER_PAGE)
+    context = {'Fotos': fotos, 'categories': categories, 'is_paginated': True, 'paginator': product_paginator, 'page_obj': fotos}
     return render(request, 'foto/home.html', context)
 
 
@@ -53,19 +66,20 @@ def foto(request, foto_id):
             newcomment.user = request.user
             newcomment.foto_id = foto_id
             newcomment.save()
-            print('Form is working...')
+            print('Created comment...')
             return redirect('user')
         except ValueError:
             return render(request, 'foto/foto.html', {'form': CommentsForm(), 'error': 'Ошибка'})
 
 
 
-def delete_comment(request, foto_id):
-    comment = get_object_or_404(Comments, pk=foto_id, user=request.user)
+def delete_comment(request, pk):
+    comment = get_object_or_404(Comments, pk=pk, user=request.user)
     if request.method == 'GET':
         comment.delete()
+        print('Deleted comment...')
         return redirect('user')
-        #return HttpResponseRedirect(reverse('foto', args=[str(foto)]))
+        #return HttpResponseRedirect(reverse('foto', args=[str(pk)]))
 
 
 
@@ -119,3 +133,15 @@ def add_comment(request,foto_id):
             return redirect('user')
         except ValueError:
             return render(request, 'foto/add_comment.html', {'form': CommentsForm(), 'error': 'Ошибка'})
+
+
+
+def search(request):
+    if request.method == 'POST':
+        search = request.POST.get('search')
+        fotos = Foto.objects.filter(Q(title__icontains=search) | Q(description__icontains=search))
+        categories = Category.objects.all()
+        context = {'Fotos': fotos, 'categories': categories, 'search': search}
+        return render(request, 'foto/search.html', context)
+    else:
+        pass

@@ -28,7 +28,9 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('user/', views.user, name='user'),
     path('add/', views.add_foto, name='add_foto'),
-    path('foto/<int:foto_id>/add-comment/', views.add_comment, name='add_comment'),
-    path('foto/<int:foto_id>/delete', views.delete_comment, name='delete_comment'),
+    #path('foto/<int:foto_id>/add-comment/', views.add_comment, name='add_comment'),
+    path('foto/<int:pk>/add_comment/', views.add_comment, name='add_comment'),
+    path('foto/<int:pk>/delete', views.delete_comment, name='delete_comment'),
+    path('search/', views.search, name='search'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

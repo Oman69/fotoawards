@@ -1,10 +1,10 @@
 {% extends 'foto/base.html' %}
 {% load static %}
-{% block title %} Главная страница{% endblock%}
-{% block h1%}Все фотографии{%endblock%}
-{% block active %} active {% endblock %}
+{% block title %} Страница поиска {% endblock%}
+{% block h1%}Вы искали {%endblock%}
 {% block main_content %}
-{% for item in Fotos %}
+{% if search %}
+    {% for item in Fotos %}
     {% if item.affected %}
   <div class="col-md-3">
     <div class="card " style="width: 18rem;">
@@ -40,6 +40,7 @@
 {% endif %}
 
 {% endfor %}
-
-
+{% else %}
+    <h2>Введите данные для поиска</h2>
+{% endif%}
 {% endblock %}
