@@ -11,7 +11,11 @@
 
   <img src="{{ item.images.url }}" class="card-img-top" alt="{{ item.title}}">
       <div class="mask">
-        <p class="card-text fs-6 ">{{ item.description|truncatechars:100 }}
+          {% if item.description %}
+          <p class="card-text fs-6 ">{{ item.description|truncatechars:100 }} </p>
+          {% else%}
+          <p class="card-text fs-6 ">Здесь должно быть описание картинки</p>
+          {% endif %}
       </div>
   <div class="card-body">
     <p class="card-text">Категория: {{ item.category }} </p>
@@ -38,8 +42,5 @@
 </div>
 </div>
 {% endif %}
-
 {% endfor %}
-
-
 {% endblock %}

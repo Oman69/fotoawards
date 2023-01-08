@@ -8,15 +8,26 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # Create your views here.
 PRODUCTS_PER_PAGE = 4
 
-def home(request, sort=1):
-
-    sort_voices = request.GET.get('voices', '')
-    sort_comments = request.GET.get('comments', '')
-    sort_date = request.GET.get('date', '')
-
+def home(request):
+    # Вытаскиваем все объекты классов Фото и Категории
     categories = Category.objects.all()
-    orders = ['voices', 'add_data']
-    fotos = Foto.objects.order_by(orders[sort])
+    fotos = Foto.objects.all()
+
+    # Сортировка
+    sorting = request.GET.get('ordering', '')
+    if sorting:
+        fotos = fotos.order_by(sorting)
+
+    # Убираем дубликаты при выводе
+    groupnames = set()
+    distinct_fotos = []
+    for item in fotos:
+        if item.title not in groupnames:
+            distinct_fotos.append(item)
+            groupnames.add(item.title)
+    fotos = distinct_fotos
+
+    # Пагинация
     page = request.GET.get('page', 1)
     product_paginator = Paginator(fotos, PRODUCTS_PER_PAGE)
     try:
@@ -25,19 +36,50 @@ def home(request, sort=1):
         fotos = product_paginator.page(product_paginator.num_pages)
     except:
         fotos = product_paginator.page(PRODUCTS_PER_PAGE)
+
+    # Добавляем контекст
     context = {'Fotos': fotos, 'categories': categories, 'is_paginated': True, 'paginator': product_paginator, 'page_obj': fotos}
     return render(request, 'foto/home.html', context)
 
 
 
 def category(request, category_id):
-    filter_foto = Foto.objects.filter(category_id=category_id)
+    fotos = Foto.objects.filter(category_id=category_id)
+
+    # Сортировка
+    sorting = request.GET.get('ordering', '')
+    if sorting:
+        fotos = fotos.order_by(sorting)
+
+    # Убираем дубликаты при выводе
+    groupnames = set()
+    distinct_fotos = []
+    for item in fotos:
+        if item.title not in groupnames:
+            distinct_fotos.append(item)
+            groupnames.add(item.title)
+    fotos = distinct_fotos
+
+    # Пагинация
+    page = request.GET.get('page', 1)
+    product_paginator = Paginator(fotos, PRODUCTS_PER_PAGE)
+    try:
+        fotos = product_paginator.page(page)
+    except EmptyPage:
+        fotos = product_paginator.page(product_paginator.num_pages)
+    except:
+        fotos = product_paginator.page(PRODUCTS_PER_PAGE)
+
+
     categories = Category.objects.all()
     category_id = Category.objects.get(pk=category_id)
     context = {
-        'filter_foto': filter_foto,
+        'filter_foto': fotos,
         'categories': categories,
         'category_id': category_id,
+        'is_paginated': True,
+        'paginator': product_paginator,
+        'page_obj': fotos
     }
     return render(request, 'foto/category.html', context)
 

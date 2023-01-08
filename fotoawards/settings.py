@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.vk',
     'django.contrib.staticfiles',
     'foto',
+    'django_celery_beat',
 ]
 
 SITE_ID = 1
@@ -82,6 +83,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'fotoawards.wsgi.application'
+
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 
 # Database

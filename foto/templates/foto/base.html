@@ -64,19 +64,23 @@
                   {% endfor%}
                 </ul>
                 <br>
-              <!--<form class="search" role="search">-->
+                <!-- Поиск -->
                   <form class="search" method="post" action="{% url 'search' %}">
                       {% csrf_token %}
                 <input class="form-control me-2" type="search" placeholder="" aria-label="Search" name="search">
                       <button class="btn btn-light" type="submit">Поиск</button>
               </form>
+
+              <!-- Сортировка-->
               <div class="mg-h-10">
               <h5>Сортировать по:</h5>
-              <ul>
-                  <a href="{% url 'home' %}"><li>Голосам</li></a>
-                  <a href="#"><li>Комментариям</li></a>
-                  <a href="{% url 'home' %}"><li>Дате добавления</li></a>
-              </ul>
+               <select name="sort" id="sort-list" onchange="location = finalurl();" style="margin-left: auto;">
+                    <option value="" id="placeholder" disabled selected hidden>Выбрать</option>
+                    <option id="-voices" value="-voices">Голосам</option>
+                    <option id="-comments" value="-comments">Комментариям</option>
+                    <option id="-add_data" value="-add_data">Сначала новые</option>
+                   <option id="add_data" value="add_data">Сначала старые</option>
+                  </select>
           </div>
           </div>
 
@@ -88,28 +92,28 @@
               {% block main_content %}
                 {% endblock %}
 
-
+                <!-- Pagination -->
                   {% if is_paginated %}
                 <div class="pagination">
                 <nav aria-label="Page navigation example">
                   <ul class="pagination">
                       {% if page_obj.has_previous %}
                     <li class="page-item">
-                      <a class="page-link" href="/?page={{ page_obj.previous_page_number }}" aria-label="Previous" tabindex="-1">
+                      <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous" tabindex="-1">
                         <span aria-hidden="true">&laquo;</span>
                       </a>
                     </li>
                       {% endif%}
                       {% for item in paginator.page_range %}
                       {% if item == page_obj.number%}
-                        <li class="page-item active" aria-current="page"><a class="page-link" href="/?page={{ item }}">{{ item }}</a></li>
+                        <li class="page-item active" aria-current="page"><a class="page-link" href="?page={{ item }}">{{ item }}</a></li>
                       {% else %}
-                        <li class="page-item"><a class="page-link" href="/?page={{ item }}">{{ item }}</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ item }}">{{ item }}</a></li>
                       {% endif %}
                       {% endfor %}
                       {% if page_obj.has_next %}
                     <li class="page-item">
-                      <a class="page-link" href="/?page={{ page_obj.next_page_number }}" aria-label="Next">
+                      <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                       </a>
                     </li>
@@ -123,8 +127,16 @@
 
         </div>
     </div>
-
-
+<!-- Footer -->
+<footer class="bg-light text-center text-lg-start">
+  <!-- Copyright -->
+  <div class="text-center p-3" style="background-color: rgba(var(--bs-light-rgb),var(--bs-bg-opacity))!important;
+};">
+    © 2023 Copyright:
+    <a class="text-dark" href="#">PythonDjango.com</a>
+  </div>
+  <!-- Copyright -->
+</footer>
 </body>
 <script type="text/javascript" src="{{ STATIC_URL}}/static/script.js"></script>
 </html>

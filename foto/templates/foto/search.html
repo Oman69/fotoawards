@@ -1,7 +1,7 @@
 {% extends 'foto/base.html' %}
 {% load static %}
 {% block title %} Страница поиска {% endblock%}
-{% block h1%}Вы искали {%endblock%}
+{% block h1%}Вы искали: {{ search }} {%endblock%}
 {% block main_content %}
 {% if search %}
     {% for item in Fotos %}
