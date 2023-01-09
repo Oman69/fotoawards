@@ -58,3 +58,15 @@ class Comments(models.Model):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
+
+
+class Subscribe(models.Model):
+    user = models.CharField(max_length=100, verbose_name='Имя пользователя')
+    email = models.EmailField(max_length=100, verbose_name='Электронная почта')
+
+    def __str__(self):
+        return self.user
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'

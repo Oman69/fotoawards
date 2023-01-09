@@ -20,7 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin'),
     path('', views.home, name='home'),
     path('category/<int:category_id>/', views.category, name='category'),
     path('foto/<int:foto_id>/', views.foto, name='foto'),
@@ -28,9 +28,10 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('user/', views.user, name='user'),
     path('add/', views.add_foto, name='add_foto'),
-    #path('foto/<int:foto_id>/add-comment/', views.add_comment, name='add_comment'),
-    path('foto/<int:pk>/add_comment/', views.add_comment, name='add_comment'),
-    path('foto/<int:pk>/delete', views.delete_comment, name='delete_comment'),
+    path('foto/<int:foto_id>/add_comment/', views.add_comment, name='add_comment'),
+    path('foto/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
     path('search/', views.search, name='search'),
+    path('foto/<int:foto_id>/delete_foto/', views.delete_foto, name='delete_foto'),
+    path('subscribe/', views.subscribe, name='subscribe'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,10 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
-from .forms import FotoForm, CommentsForm
+from .forms import FotoForm, CommentsForm, SubscribeForm
 from .models import Foto, Category, Comments
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+from .service import send
+
 # Create your views here.
 PRODUCTS_PER_PAGE = 4
 
@@ -109,19 +112,14 @@ def foto(request, foto_id):
             newcomment.foto_id = foto_id
             newcomment.save()
             print('Created comment...')
-            return redirect('user')
+            return redirect('home')
+            #return redirect('foto', foto_id=foto_id)
         except ValueError:
             return render(request, 'foto/foto.html', {'form': CommentsForm(), 'error': 'Ошибка'})
 
 
 
-def delete_comment(request, pk):
-    comment = get_object_or_404(Comments, pk=pk, user=request.user)
-    if request.method == 'GET':
-        comment.delete()
-        print('Deleted comment...')
-        return redirect('user')
-        #return HttpResponseRedirect(reverse('foto', args=[str(pk)]))
+
 
 
 
@@ -144,6 +142,13 @@ def user(request):
     return render(request, 'foto/user.html', context)
 
 
+def delete_foto(request, foto_id):
+    foto = get_object_or_404(Foto, pk=foto_id, user=request.user)
+    if request.method == 'GET':
+        foto.delete()
+        print('Foto comment...')
+        return redirect('user')
+
 
 #Добавить фотографию
 def add_foto(request):
@@ -158,7 +163,6 @@ def add_foto(request):
             return redirect('user')
         except ValueError:
             return render(request, 'foto/add_foto.html', {'form': FotoForm(), 'error': 'Ошибка при загрузке'})
-
 
 
 def add_comment(request,foto_id):
@@ -177,6 +181,15 @@ def add_comment(request,foto_id):
             return render(request, 'foto/add_comment.html', {'form': CommentsForm(), 'error': 'Ошибка'})
 
 
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comments, pk=comment_id, user=request.user)
+    if request.method == 'GET':
+        comment.delete()
+        print('Deleted comment...')
+        return redirect('user')
+        #return redirect('foto')
+
+
 
 def search(request):
     if request.method == 'POST':
@@ -187,3 +200,19 @@ def search(request):
         return render(request, 'foto/search.html', context)
     else:
         pass
+
+# Форма подписки
+def subscribe(request):
+
+    if request.method == 'GET':
+        return render(request, 'foto/subscribe.html', {'form': SubscribeForm()})
+    else:
+        try:
+            subscribe_form = SubscribeForm(request.POST, request.FILES)
+            new_subscribe = subscribe_form.save(commit=False)
+            new_subscribe.user = request.user
+            new_subscribe.save()
+            send(subscribe_form.instance.email)
+            return redirect('home')
+        except ValueError:
+            return render(request, 'foto/subscribe.html', {'form': SubscribeForm(), 'error': 'Ошибка'})

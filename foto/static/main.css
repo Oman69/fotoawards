@@ -17,6 +17,7 @@ p {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-column-gap: 10px;
+    /*justify-items: center;*/
 }
 
 .mg-h-10 {
@@ -27,6 +28,7 @@ p {
     display: grid;
     grid-temple-rows: 1fr 1fr;
     grid-gap: 10px;
+
 }
 
 

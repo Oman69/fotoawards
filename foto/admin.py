@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from foto.models import Foto, Category, Comments
+from foto.models import Foto, Category, Comments, Subscribe
 
 # Register your models here.
 class FotoAdmin(admin.ModelAdmin):
@@ -16,7 +16,12 @@ class CommentsAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'text', 'foto', 'user')
 
 
+class SubscribeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'email')
+    list_display_links = ('id', 'user', 'email')
+
 
 admin.site.register(Foto, FotoAdmin)
 admin.site.register(Category)
 admin.site.register(Comments, CommentsAdmin)
+admin.site.register(Subscribe, SubscribeAdmin)

@@ -1,0 +1,15 @@
+{% extends 'foto/base.html' %}
+{% load static %}
+{% block title %} Страница подписки {% endblock %}
+{% block h1%} Оформить подписку {%endblock%}
+{% block main_content %}
+
+    <span style="color:red; font-weight: bold">{{ error }}</span>
+    <form enctype='multipart/form-data' method="POST">
+        {% csrf_token %}
+       {{form.as_p}}
+        <button type="submit" class="btn btn-primary">Подписаться</button>
+    </form>
+
+
+{% endblock%}
