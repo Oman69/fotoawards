@@ -214,7 +214,8 @@ def subscribe(request):
             new_subscribe.user = request.user
             new_subscribe.save()
             #send(subscribe_form.instance.email)
-            send_spam_email.delay(subscribe_form.instance.email)
+            #send_spam_email.delay(subscribe_form.instance.email)
+            send_spam_email.apply_async((subscribe_form.instance.email,), countdown=60)
             return redirect('home')
         except ValueError:
             return render(request, 'foto/subscribe.html', {'form': SubscribeForm(), 'error': 'Ошибка'})
