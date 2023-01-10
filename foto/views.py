@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .service import send
+from .tasks import send_spam_email
 
 # Create your views here.
 PRODUCTS_PER_PAGE = 4
@@ -212,7 +213,8 @@ def subscribe(request):
             new_subscribe = subscribe_form.save(commit=False)
             new_subscribe.user = request.user
             new_subscribe.save()
-            send(subscribe_form.instance.email)
+            #send(subscribe_form.instance.email)
+            send_spam_email.delay(subscribe_form.instance.email)
             return redirect('home')
         except ValueError:
             return render(request, 'foto/subscribe.html', {'form': SubscribeForm(), 'error': 'Ошибка'})
