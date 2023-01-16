@@ -1,0 +1,21 @@
+{% extends 'foto/base_user.html' %}
+{% load static %}
+{% block title %} Изменить комментарий {% endblock %}
+{% block h1%} Изменить комментарий {%endblock%}
+{% block main_content %}
+
+    <span style="color:red; font-weight: bold">{{ error }}</span>
+    <form enctype='multipart/form-data' method="POST">
+        {% csrf_token %}
+       {% for field in form %}
+                <div class="fieldWrapper">
+                    {{ error }}
+                    <p class="popup_title">{{ field.label_tag }}</p>
+                    <p>{{ field }}</p>
+                </div>
+            {% endfor %}
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+
+
+{% endblock%}

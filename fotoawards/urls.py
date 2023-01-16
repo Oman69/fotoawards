@@ -18,6 +18,25 @@ from django.urls import path, include
 from foto import views
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework import routers, serializers, viewsets
+from django.contrib.auth.models import User
+
+# Serializers define the API representation.
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ['url', 'username', 'email', 'is_staff']
+
+# ViewSets define the view behavior.
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register(r'users', UserViewSet)
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
@@ -30,8 +49,16 @@ urlpatterns = [
     path('add/', views.add_foto, name='add_foto'),
     path('foto/<int:foto_id>/add_comment/', views.add_comment, name='add_comment'),
     path('foto/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
+    path('foto/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),
     path('search/', views.search, name='search'),
     path('foto/<int:foto_id>/delete_foto/', views.delete_foto, name='delete_foto'),
+    path('foto/<int:foto_id>/no_delete_foto/', views.no_delete_foto, name='no_delete_foto'),
+    path('foto/<int:foto_id>/edit_foto/', views.edit_foto, name='edit_foto'),
     path('subscribe/', views.subscribe, name='subscribe'),
+    #REST API
+    path('api/', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

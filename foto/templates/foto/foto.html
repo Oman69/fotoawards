@@ -10,6 +10,7 @@
       <div class="card-body after-text mg-h-10">
         <h5 class="card-text">Категория: {{ foto_id.category }}</h5>
         <h5 class="card-text">Aвтор: {{ foto_id.user }}</h5>
+          <h5 class="card-text">Опубликовано: {{ foto_id.add_data|date:"M d, Y" }}</h5>
       </div>
                   <p class="card-text fs-6 ">{{ foto_id.description }}</p>
 
@@ -49,6 +50,8 @@
         <p>{{ item.text }} </p>
         {% if item.user == request.user %}
         <a href="{% url 'delete_comment' item.pk %}"> Удалить </a>
+        <br>
+        <a href="{% url 'edit_comment' item.pk %}"> Редактировать </a>
         {% endif %}
         <br>
         {% endfor %}

@@ -15,6 +15,7 @@ class Foto(models.Model):
     affected = models.BooleanField(default=False, verbose_name='Одобрено модератором')
     images = models.ImageField(upload_to='media', verbose_name='Фотография')
     voices = models.ManyToManyField(User, related_name='foto_voices', verbose_name='Голоса', blank=True)
+    deleted = models.BooleanField(default=False, verbose_name='Удалено')
 
 
     def __str__(self):

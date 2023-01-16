@@ -1,5 +1,8 @@
+import jsonpickle
+
+from django.core import serializers
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Q
+from django.db.models import Q, Count
 from .forms import FotoForm, CommentsForm, SubscribeForm
 from .models import Foto, Category, Comments
 from django.http import HttpResponseRedirect
@@ -7,18 +10,19 @@ from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .service import send
-from .tasks import send_spam_email
+from .tasks import send_spam_email, lazy_delete_foto
 
 # Create your views here.
 PRODUCTS_PER_PAGE = 4
 
+
 def home(request):
     # Вытаскиваем все объекты классов Фото и Категории
     categories = Category.objects.all()
-    fotos = Foto.objects.all()
+    fotos = Foto.objects.annotate(comments_count=Count('comments'), voices_count=Count('voices'))
 
     # Сортировка
-    sorting = request.GET.get('ordering', '')
+    sorting = request.GET.get('ordering', None)
     if sorting:
         fotos = fotos.order_by(sorting)
 
@@ -114,16 +118,11 @@ def foto(request, foto_id):
             newcomment.save()
             print('Created comment...')
             return redirect('home')
-            #return redirect('foto', foto_id=foto_id)
         except ValueError:
             return render(request, 'foto/foto.html', {'form': CommentsForm(), 'error': 'Ошибка'})
 
 
-
-
-
-
-
+#Лайки
 def like(request, foto_id):
     foto_id = get_object_or_404(Foto, id=request.POST.get('foto_id'))
     liked = False
@@ -135,20 +134,37 @@ def like(request, foto_id):
         liked = True
     return HttpResponseRedirect(reverse('foto', args=[str(foto_id.pk)]))
 
-
+#Личный кабинет пользователя
 def user(request):
     filter_foto = Foto.objects.filter(user=request.user)
     categories = Category.objects.all()
-    context = {'Fotos': filter_foto, 'categories': categories}
+
+    # Фильтрация
+    filtering = request.GET.get('filtering', '')
+
+    if filtering == 'on_moderation':
+        new_filter = []
+        for item in filter_foto:
+            if item.affected == False:
+                new_filter.append(item)
+    elif filtering == 'on_delete':
+        new_filter = []
+        for item in filter_foto:
+            if item.deleted == True:
+                new_filter.append(item)
+    elif filtering == 'accepted':
+        new_filter = []
+        for item in filter_foto:
+            if item.affected == True:
+                new_filter.append(item)
+    else:
+        new_filter = filter_foto
+
+
+    context = {'Fotos': new_filter, 'categories': categories}
     return render(request, 'foto/user.html', context)
 
 
-def delete_foto(request, foto_id):
-    foto = get_object_or_404(Foto, pk=foto_id, user=request.user)
-    if request.method == 'GET':
-        foto.delete()
-        print('Foto comment...')
-        return redirect('user')
 
 
 #Добавить фотографию
@@ -166,6 +182,44 @@ def add_foto(request):
             return render(request, 'foto/add_foto.html', {'form': FotoForm(), 'error': 'Ошибка при загрузке'})
 
 
+def edit_foto(request, foto_id):
+    foto = get_object_or_404(Foto, pk=foto_id, user=request.user)
+    if request.method == 'GET':
+        form = FotoForm(instance=foto)
+        return render(request, 'foto/add_foto.html', {'foto': foto, 'form': form})
+    else:
+        try:
+            form = FotoForm(request.POST, instance=foto)
+            form.save()
+            return redirect('user')
+        except ValueError:
+            return render(request, 'foto/add_foto.html', {'foto': foto, 'form': form, 'error': 'Bad data!'})
+
+
+
+#Удалить фотографию
+def delete_foto(request, foto_id):
+    foto = get_object_or_404(Foto, pk=foto_id, user=request.user)
+    frozen = jsonpickle.encode(foto)
+    if request.method == 'GET':
+        foto.deleted = True
+        foto.save()
+        #foto.delete()
+
+        #Отложенное удаление фотографии через 60 секунд
+        lazy_delete_foto.apply_async((frozen, ), countdown=60)
+        return redirect('user')
+
+
+#Отменить удаление
+def no_delete_foto(request, foto_id):
+    foto = get_object_or_404(Foto, pk=foto_id, user=request.user)
+    if request.method == 'GET':
+        foto.deleted = False
+        foto.save()
+        return redirect('user')
+
+
 def add_comment(request,foto_id):
     if request.method == 'GET':
         return render(request, 'foto/add_comment.html', {'form': CommentsForm()})
@@ -176,26 +230,42 @@ def add_comment(request,foto_id):
             newcomment.user = request.user
             newcomment.foto_id = foto_id
             newcomment.save()
+
             print('Form is working...')
-            return redirect('user')
+            return redirect('home')
         except ValueError:
             return render(request, 'foto/add_comment.html', {'form': CommentsForm(), 'error': 'Ошибка'})
 
 
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comments, pk=comment_id, user=request.user)
+    if request.method == 'GET':
+        form = CommentsForm(instance=comment)
+        return render(request, 'foto/edit.html', {'comment': comment, 'form': form})
+    else:
+        try:
+            form = CommentsForm(request.POST, instance=comment)
+            form.save()
+            return redirect('home')
+        except ValueError:
+            return render(request, 'foto/edit.html', {'comment': comment, 'form': form, 'error': 'Bad data!'})
+
+
 def delete_comment(request, comment_id):
+    foto_id = request.path
     comment = get_object_or_404(Comments, pk=comment_id, user=request.user)
     if request.method == 'GET':
         comment.delete()
         print('Deleted comment...')
-        return redirect('user')
-        #return redirect('foto')
+        return redirect('home')
+        #return redirect('foto', foto_id=foto_id)
 
 
 
 def search(request):
     if request.method == 'POST':
         search = request.POST.get('search')
-        fotos = Foto.objects.filter(Q(title__icontains=search) | Q(description__icontains=search))
+        fotos = Foto.objects.filter(Q(title__icontains=search) | Q(description__icontains=search)| Q(user__username__icontains=search))
         categories = Category.objects.all()
         context = {'Fotos': fotos, 'categories': categories, 'search': search}
         return render(request, 'foto/search.html', context)

@@ -5,7 +5,7 @@
 {% block active %} active {% endblock %}
 {% block main_content %}
 {% for item in Fotos %}
-    {% if item.affected %}
+    {% if item.affected and not item.deleted %}
   <div class="col-md-3">
     <div class="card " style="width: 18rem;">
 

@@ -47,11 +47,21 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'foto',
     'django_celery_beat',
+    'rest_framework',
 ]
 
 SITE_ID = 1
 
 LOGIN_REDIRECT_URL = 'home'
+
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
+
 
 
 MIDDLEWARE = [

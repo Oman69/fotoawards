@@ -3,7 +3,7 @@
 {% block h1%} Категория фото: {{ category_id.title }} {%endblock%}
 {% block main_content %}
 {% for item in filter_foto %}
-    {% if item.affected %}
+    {% if item.affected and not item.deleted %}
   <div class="col-md-3">
     <div class="card " style="width: 18rem;">
 

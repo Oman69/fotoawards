@@ -4,11 +4,11 @@ from foto.models import Foto, Category, Comments, Subscribe
 
 # Register your models here.
 class FotoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'category', 'add_data', 'user', 'affected')
+    list_display = ('id', 'title', 'category', 'add_data', 'user', 'affected', 'deleted')
     list_display_links = ('id', 'title')
     search_fields = ('title', 'description')
-    list_editable = ('affected',)
-    list_filter = ('affected',)
+    list_editable = ('affected', 'deleted')
+    list_filter = ('affected','deleted')
 
 
 class CommentsAdmin(admin.ModelAdmin):

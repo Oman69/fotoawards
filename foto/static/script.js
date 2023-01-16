@@ -9,3 +9,18 @@ if(get('ordering'))
     var new_url = url.toString();
     return new_url
   }
+
+
+
+
+if(get('filtering'))
+  document.getElementById('placeholder').innerHTML = "Sort: " + document.getElementById(get('filtering')).innerHTML;
+
+  function finalurl2() {
+    var url = new URL(window.location.href);
+    var search_params = url.searchParams;
+    search_params.set('filtering', document.getElementById("filtering").value);
+    url.search = search_params.toString();
+    var new_url = url.toString();
+    return new_url
+  }

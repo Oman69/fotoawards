@@ -75,7 +75,7 @@ margin: 20px 0;
 
 .after-text {
     display: grid;
-    grid-template-columns: 4fr 2fr 1fr 2fr 2fr;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-column-gap: 10px;
 }
 
@@ -163,3 +163,13 @@ margin: 20px 0;
   opacity: 1;
   transform: translate(0px, 0px);
 }
+
+
+.user_text {
+    display: inline-block;
+    margin:20px 0;
+}
+
+.right-border {
+    border-right: 1px solid #E6E6E6;
+}2

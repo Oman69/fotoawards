@@ -1,24 +1,10 @@
-{% extends 'foto/base.html' %}
+{% extends 'foto/base_user.html' %}
 {% load static %}
 {% block title %} Личный кабинет {% endblock %}
 {% block h1%} Мои фотографии {%endblock%}
 {% block main_content %}
-<div class="user_block">
-    <span class="mg-h-10">
-        {% if user.first_name%}
-        <p>Привет, {{user.first_name}}.
-        {% else%}
-        <p>Привет, {{user}}.
-        {% endif %}
-        Это твой личный кабинет пользователя. </p>
-    <p>В этом разделе размещаются твои загруженные фотографии.<br> Здесь ты можешь добавлять или удалять свои фотографии.</p>
-    </span>
 
-{% if user.socialaccount_set.all.0 %}
-            <div>
-                <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" />
-            </div>
-            {% endif %}</div>
+
 {% for item in Fotos %}
   <div class="col-md-3">
     <div class="card" style="width: 18rem;">
@@ -32,6 +18,9 @@
     <h5 class="card-title">{{ item.title }}</h5>
       {% if not item.affected %}
       <p style="color: var(--bs-yellow);"> На модерации</p>
+      {% endif %}
+      {% if item.deleted %}
+      <p style="color: var(--bs-red);"> На удалении</p>
       {% endif %}
 
     <span class="card-text fs-4">{{ item.total_voices }}
@@ -50,9 +39,19 @@
           <div class="mg-h-10">
           <a href="{% url 'foto' item.pk %}" class="btn btn-primary">Посмотреть</a>
       </div>
-      <div class="mg-h-10">
+          {% if not item.deleted %}
+          <div class="mg-h-10">
           <a href="{% url 'delete_foto' item.pk %}" class="btn btn-danger">Удалить</a>
-      </div>
+            </div>
+          <div class="mg-h-10">
+          <a href="{% url 'edit_foto' item.pk %}" class="btn btn-dark">Редактировать</a>
+            </div>
+          {% else %}
+          <div class="mg-h-10">
+          <a href="{% url 'no_delete_foto' item.pk %}" class="btn btn-danger">Отменить</a>
+        </div>
+          {% endif %}
+
       </div>
 
 
