@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'foto',
     'django_celery_beat',
     'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
 ]
 
 SITE_ID = 1
@@ -58,8 +60,14 @@ LOGIN_REDIRECT_URL = 'home'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    ],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
 }
 
 

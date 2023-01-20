@@ -27,9 +27,15 @@
           <a class="nav-link" href="{% url 'add_foto' %}">Загрузить фото</a>
         </li>
           {% endif %}
-        <li class="nav-item">
-          <a class="nav-link disabled">Неактивно</a>
+          {% if user.is_staff %}
+          <li class="nav-item">
+          <a class="nav-link" href="#">Модерация</a>
         </li>
+          {% else %}
+        <li class="nav-item">
+          <a class="nav-link disabled">Модерация</a>
+        </li>
+          {% endif %}
       </ul>
         {% if user.is_authenticated %}
         <div class="user_block">
@@ -76,8 +82,8 @@
               <h5>Сортировать по:</h5>
                <select name="sort" id="sort-list" onchange="location = finalurl();" style="margin-left: auto;">
                     <option value="" id="placeholder" disabled selected hidden>Выбрать</option>
-                    <option id="voices_count" value="-voices_count">Голосам</option>
-                    <option id="comments_count" value="-comments_count">Комментариям</option>
+                    <option id="-voices" value="-voices">Голосам</option>
+                    <option id="-comments_count" value="-comments_count">Комментариям</option>
                     <option id="-add_data" value="-add_data">Сначала новые</option>
                    <option id="add_data" value="add_data">Сначала старые</option>
                   </select>

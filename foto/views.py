@@ -1,4 +1,6 @@
 import jsonpickle
+from celery.contrib.abortable import AbortableAsyncResult
+from celery.worker.control import revoke
 
 from django.core import serializers
 from django.shortcuts import render, get_object_or_404, redirect
@@ -10,7 +12,7 @@ from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .service import send
-from .tasks import send_spam_email, lazy_delete_foto
+from .tasks import send_spam_email, lazy_delete_foto, stop_deleting
 
 # Create your views here.
 PRODUCTS_PER_PAGE = 4
@@ -204,6 +206,8 @@ def delete_foto(request, foto_id):
     if request.method == 'GET':
         foto.deleted = True
         foto.save()
+
+        #Синхронное удаление
         #foto.delete()
 
         #Отложенное удаление фотографии через 60 секунд
@@ -217,6 +221,7 @@ def no_delete_foto(request, foto_id):
     if request.method == 'GET':
         foto.deleted = False
         foto.save()
+        stop_deleting()
         return redirect('user')
 
 
