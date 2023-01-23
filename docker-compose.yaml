@@ -1,0 +1,23 @@
+
+version: "3.9"
+
+services:
+  redis:
+    image: redis
+    restart: always
+
+  fotoawards:
+    restart: always
+    build:
+      context: ./fotoawards_project
+    ports:
+      - "8000:8000"
+    command: [ "python3", "manage.py", "runserver", "0.0.0.0:8000"]
+
+  worker:
+    restart: always
+    build:
+      context: ./fotoawards_project
+    volumes:
+      - ./fotoawards_project
+    command: ['celery', '-A', 'fotoawards', 'worker', '-P', 'eventlet' ]
