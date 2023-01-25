@@ -1,4 +1,4 @@
-import redis
+
 from django.core.mail import send_mail
 
 def send(user_email):

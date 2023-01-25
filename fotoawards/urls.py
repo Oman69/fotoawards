@@ -44,9 +44,9 @@ urlpatterns = [
     #REST API
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    #path('api-auth/', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
-
-
+    #Moderation
+    path('moderation/', views.moderation, name='moderation'),
+    path('moderation/<int:foto_id>/approve_foto/', views.approve, name='approve'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

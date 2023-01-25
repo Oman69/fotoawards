@@ -29,7 +29,7 @@
           {% endif %}
         {% if user.is_staff %}
           <li class="nav-item">
-          <a class="nav-link" href="#">Модерация</a>
+          <a class="nav-link" href="{% url 'moderation' %}">Модерация</a>
         </li>
           {% else %}
         <li class="nav-item">
@@ -79,7 +79,7 @@
         {% else%}
         <p>Привет, {{user}}.
         {% endif %}
-        {% if user.is_staff%}
+        {% if user.is_staff %}
                 <strong>Вы вошли как администратор.</strong>
         {% endif %}
         Это твой личный кабинет. В этом разделе размещаются твои загруженные фотографии.<br> Здесь ты можешь добавлять или удалять свои фотографии.</p>

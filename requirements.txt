@@ -1,3 +1,4 @@
+pip==22.3.1
 amqp==5.1.1
 asgiref==3.6.0
 async-timeout==4.0.2
@@ -51,9 +52,9 @@ six==1.16.0
 SQLAlchemy==1.4.46
 sqlparse==0.4.3
 tabulate==0.8.10
-task==0.2.5
 typing-extensions==3.10.0.2
 tzdata==2022.7
 urllib3==1.26.13
 vine==5.0.0
 wcwidth==0.2.5
+djoser==2.1.0

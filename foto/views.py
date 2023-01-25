@@ -1,12 +1,11 @@
 import jsonpickle
-from celery.contrib.abortable import AbortableAsyncResult
-from celery.worker.control import revoke
+
 
 from django.core import serializers
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q, Count
 from .forms import FotoForm, CommentsForm, SubscribeForm
-from .models import Foto, Category, Comments
+from .models import Foto, Category, Comments, User
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -198,6 +197,7 @@ def edit_foto(request, foto_id):
             return render(request, 'foto/add_foto.html', {'foto': foto, 'form': form, 'error': 'Bad data!'})
 
 
+task_id =''
 
 #Удалить фотографию
 def delete_foto(request, foto_id):
@@ -209,9 +209,10 @@ def delete_foto(request, foto_id):
 
         #Синхронное удаление
         #foto.delete()
-
         #Отложенное удаление фотографии через 60 секунд
-        lazy_delete_foto.apply_async((frozen, ), countdown=60)
+        abortable_async_result = lazy_delete_foto.apply_async((frozen, ), countdown=60)
+        task_id = abortable_async_result.task_id
+        print(task_id)
         return redirect('user')
 
 
@@ -221,7 +222,7 @@ def no_delete_foto(request, foto_id):
     if request.method == 'GET':
         foto.deleted = False
         foto.save()
-        stop_deleting()
+        stop_deleting(task_id)
         return redirect('user')
 
 
@@ -257,15 +258,11 @@ def edit_comment(request, comment_id):
 
 
 def delete_comment(request, comment_id):
-    foto_id = request.path
     comment = get_object_or_404(Comments, pk=comment_id, user=request.user)
     if request.method == 'GET':
         comment.delete()
         print('Deleted comment...')
         return redirect('home')
-        #return redirect('foto', foto_id=foto_id)
-
-
 
 def search(request):
     if request.method == 'POST':
@@ -288,9 +285,56 @@ def subscribe(request):
             new_subscribe = subscribe_form.save(commit=False)
             new_subscribe.user = request.user
             new_subscribe.save()
-            #send(subscribe_form.instance.email)
+            send(subscribe_form.instance.email)
             #send_spam_email.delay(subscribe_form.instance.email)
-            send_spam_email.apply_async((subscribe_form.instance.email,), countdown=60)
+            #send_spam_email.apply_async((subscribe_form.instance.email,), countdown=60)
             return redirect('home')
         except ValueError:
             return render(request, 'foto/subscribe.html', {'form': SubscribeForm(), 'error': 'Ошибка'})
+
+
+def moderation(request):
+    # Вытаскиваем все объекты классов Фото и Категории
+    fotos = Foto.objects.all()
+    users = User.objects.all()
+    #Фильтрация
+    filtering = request.GET.get('filtering', '')
+
+    if filtering == 'on_moderation':
+        new_filter = []
+        for item in fotos:
+            if item.affected == False:
+                new_filter.append(item)
+    elif filtering == 'on_delete':
+        new_filter = []
+        for item in fotos:
+            if item.deleted == True:
+                new_filter.append(item)
+    elif filtering == 'accepted':
+        new_filter = []
+        for item in fotos:
+            if item.affected == True:
+                new_filter.append(item)
+    else:
+        new_filter = fotos
+
+
+    #Фильтрация по пользователям
+    user = request.GET.get('user', '')
+    if user:
+        new_filter = Foto.objects.filter(user=user)
+    else:
+        print('Вывод всех фото')
+
+    # Добавляем контекст
+    context = {'Fotos': new_filter, 'Users': users}
+    return render(request, 'foto/moderation.html', context)
+
+
+def approve(request, foto_id):
+    foto = get_object_or_404(Foto, pk=foto_id)
+    if request.method == 'GET':
+        foto.affected = True
+        foto.save()
+        print('Foto approved...')
+        return redirect('home')

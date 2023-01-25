@@ -29,7 +29,7 @@
           {% endif %}
           {% if user.is_staff %}
           <li class="nav-item">
-          <a class="nav-link" href="#">Модерация</a>
+          <a href="{% url 'moderation' %}" class="nav-link">Модерация</a>
         </li>
           {% else %}
         <li class="nav-item">
@@ -61,7 +61,6 @@
   </div>
 </nav>
     <div class="container-fluid">
-
       <div class="row p-4">
           <div class="col-md-2">
               <ul class="list-group list-group-flush">
@@ -89,7 +88,6 @@
                   </select>
           </div>
           </div>
-
           <div class="col-md-10">
               <h1>{% block h1%}Base H1{% endblock %}</h1>
               <div class="row p-2">
@@ -109,7 +107,7 @@
                         <span aria-hidden="true">&laquo;</span>
                       </a>
                     </li>
-                      {% endif%}
+                      {% endif %}
                       {% for item in paginator.page_range %}
                       {% if item == page_obj.number%}
                         <li class="page-item active" aria-current="page"><a class="page-link" href="?page={{ item }}">{{ item }}</a></li>

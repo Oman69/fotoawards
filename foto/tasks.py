@@ -1,6 +1,7 @@
+from time import sleep
+
 import jsonpickle
-from celery.worker.control import revoke
-from django.core.cache import cache
+
 
 from fotoawards.celery import app
 from .service import send
@@ -17,14 +18,13 @@ def send_spam_email(user_email):
 def lazy_delete_foto(self, frozen):
     id_task = str(self.request.id)
     foto = jsonpickle.decode(frozen)
-    print(f'Фото № {foto.pk} удалено. Task_id:{id_task}')
     if not self.is_aborted():
         foto.delete()
+        print(f'Фото № {foto.pk} удалено. Task_id:{id_task}')
     else:
-        revoke(task_id=id_task, terminate=True)
         return 'Задача остановлена'
 
 
-def stop_deleting():
-    stop = AbortableAsyncResult(id=str(lazy_delete_foto))
+def stop_deleting(task_id):
+    stop = AbortableAsyncResult(task_id)
     stop.abort()

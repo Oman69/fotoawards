@@ -24,3 +24,17 @@ if(get('filtering'))
     var new_url = url.toString();
     return new_url
   }
+
+
+
+if(get('user'))
+  document.getElementById('placeholder').innerHTML = document.getElementById(get('user')).innerHTML;
+
+  function finalurl3() {
+    var url = new URL(window.location.href);
+    var search_params = url.searchParams;
+    search_params.set('user', document.getElementById("user-list").value);
+    url.search = search_params.toString();
+    var new_url = url.toString();
+    return new_url
+  }
