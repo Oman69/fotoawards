@@ -1,14 +1,12 @@
 import jsonpickle
 
-
-from django.core import serializers
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q, Count
-from .forms import FotoForm, CommentsForm, SubscribeForm
-from .models import Foto, Category, Comments, User
+from .forms import FotoForm, CommentsForm, SubscribeForm, CommentsSecondLevelForm
+from .models import Foto, Category, Comments, User, CommentsSecondLevel
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator, EmptyPage
 
 from .service import send
 from .tasks import send_spam_email, lazy_delete_foto, stop_deleting
@@ -97,6 +95,7 @@ def foto(request, foto_id):
     if request.method == 'GET':
         foto_id = Foto.objects.get(pk=foto_id)
         categories = Category.objects.all()
+        commentsSecond = CommentsSecondLevel.objects.filter(pk=foto_id.pk)
         stuff = get_object_or_404(Foto, id=foto_id.pk)
         total_voices = stuff.total_voices()
         liked = False
@@ -107,6 +106,7 @@ def foto(request, foto_id):
             'foto_id': foto_id,
             'total_voices': total_voices,
             'liked': liked,
+            'commentsSecond': commentsSecond,
             'form': CommentsForm(),
         }
         return render(request, 'foto/foto.html', context)
@@ -181,6 +181,7 @@ def add_foto(request):
             return redirect('user')
         except ValueError:
             return render(request, 'foto/add_foto.html', {'form': FotoForm(), 'error': 'Ошибка при загрузке'})
+
 
 
 def edit_foto(request, foto_id):
@@ -264,6 +265,31 @@ def delete_comment(request, comment_id):
         print('Deleted comment...')
         return redirect('home')
 
+
+def add_comment_second_level(request,comment_id):
+    if request.method == 'GET':
+        return render(request, 'foto/add_comment_second_level.html', {'form': CommentsSecondLevelForm()})
+    else:
+        try:
+            form = CommentsSecondLevelForm(request.POST)
+            newSecondComment = form.save(commit=False)
+            newSecondComment.user = request.user
+            newSecondComment.comment_id = comment_id
+            newSecondComment.save()
+
+            print('NewForm is working...')
+            return redirect('home')
+        except ValueError:
+            return render(request, 'foto/add_comment_second_level.html', {'form': CommentsSecondLevelForm(), 'error': 'Ошибка'})
+
+
+def del_comment_second_level(request, comment_id):
+    comment = get_object_or_404(CommentsSecondLevel, pk=comment_id, user=request.user)
+    if request.method == 'GET':
+        comment.delete()
+        print('Deleted comment...')
+        return redirect('home')
+
 def search(request):
     if request.method == 'POST':
         search = request.POST.get('search')
@@ -337,4 +363,13 @@ def approve(request, foto_id):
         foto.affected = True
         foto.save()
         print('Foto approved...')
-        return redirect('home')
+        return redirect('moderation')
+
+
+def dismiss(request, foto_id):
+    foto = get_object_or_404(Foto, pk=foto_id)
+    if request.method == 'GET':
+        foto.dismissed = True
+        foto.save()
+        print('Foto dismissed...')
+        return redirect('moderation')

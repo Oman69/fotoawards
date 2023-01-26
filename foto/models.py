@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from foto.validators import validate_image
 
 
 # Create your models here.
@@ -13,10 +14,11 @@ class Foto(models.Model):
     add_data = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления')
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор')
     category = models.ForeignKey('Category', on_delete=models.DO_NOTHING, verbose_name='Категория', default='Без категории')
-    affected = models.BooleanField(default=False, verbose_name='Одобрено модератором')
+    affected = models.BooleanField(default=False, verbose_name='Одобрено')
     images = models.ImageField(upload_to='media', verbose_name='Фотография')
     voices = models.ManyToManyField(User, related_name='foto_voices', verbose_name='Голоса', blank=True)
     deleted = models.BooleanField(default=False, verbose_name='Удалено')
+    dismissed = models.BooleanField(default=False, verbose_name='Отклонено')
 
 
     def __str__(self):
@@ -60,6 +62,24 @@ class Comments(models.Model):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
+
+
+class CommentsSecondLevel(models.Model):
+    text = models.TextField(max_length=500, verbose_name='Текст комментария второго уровня')
+    comment = models.ForeignKey(Comments, on_delete=models.CASCADE, related_name='secondComment', verbose_name='Первый комментарий')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор комментария второго уровня')
+    created = models.DateTimeField(auto_now_add=True, verbose_name='Дата комментария')
+    approved = models.BooleanField(default=False, verbose_name='Одобрено модератором')
+
+
+    def __str__(self):
+        return self.text
+
+    class Meta:
+        verbose_name = 'Комментарий второго уровня'
+        verbose_name_plural = 'Комментарии второго уровня'
+
+
 
 
 class Subscribe(models.Model):

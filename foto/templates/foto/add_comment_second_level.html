@@ -1,0 +1,20 @@
+{% extends 'foto/base_user.html' %}
+{% load static %}
+{% block title %} Добавить комментарий второго уровня{% endblock %}
+{% block h1%} Добавить комментарий {%endblock%}
+{% block main_content %}
+
+    <span style="color:red; font-weight: bold">{{ error }}</span>
+    <form enctype='multipart/form-data' method="POST">
+        {% csrf_token %}
+       {% for item in form%}
+        {{ item.label }}
+        <br>
+        {{ item }}
+        {% endfor %}
+        <br>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+
+
+{% endblock%}

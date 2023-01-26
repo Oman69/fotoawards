@@ -26,17 +26,24 @@ from foto.serializers import router
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
+    #Fotos
     path('', views.home, name='home'),
     path('category/<int:category_id>/', views.category, name='category'),
     path('foto/<int:foto_id>/', views.foto, name='foto'),
     path('like/<int:foto_id>/', views.like, name='foto_like'),
+    #Login
     path('accounts/', include('allauth.urls')),
     path('user/', views.user, name='user'),
     path('add/', views.add_foto, name='add_foto'),
+    #Comments
     path('foto/<int:foto_id>/add_comment/', views.add_comment, name='add_comment'),
     path('foto/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
     path('foto/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),
+    path('foto/<int:comment_id>/add_comment_second_level/', views.add_comment_second_level, name='add_comment_second_level'),
+    path('foto/<int:comment_id>/del_comment_second_level/', views.del_comment_second_level, name='del_comment_second_level'),
+    #Search
     path('search/', views.search, name='search'),
+    #Edit foto
     path('foto/<int:foto_id>/delete_foto/', views.delete_foto, name='delete_foto'),
     path('foto/<int:foto_id>/no_delete_foto/', views.no_delete_foto, name='no_delete_foto'),
     path('foto/<int:foto_id>/edit_foto/', views.edit_foto, name='edit_foto'),
@@ -48,5 +55,6 @@ urlpatterns = [
     #Moderation
     path('moderation/', views.moderation, name='moderation'),
     path('moderation/<int:foto_id>/approve_foto/', views.approve, name='approve'),
+    path('moderation/<int:foto_id>/dismiss_foto/', views.dismiss, name='dismiss'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

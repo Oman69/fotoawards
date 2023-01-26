@@ -52,9 +52,27 @@
         <a href="{% url 'delete_comment' item.pk %}"> Удалить </a>
         <br>
         <a href="{% url 'edit_comment' item.pk %}"> Редактировать </a>
+        {% elif item.user != request.user %}
+        <a href="{% url 'add_comment_second_level' item.pk %}"> Ответить </a>
+
         {% endif %}
         <br>
-        {% endfor %}
+        <div class="secondComments">
+        {% for comment in item.secondComment.all %}
+            <div class="mg-h-10">
+            <h6>{{ comment.user }} - {{ comment.created|date:'SHORT_DATETIME_FORMAT' }}</h6>
+                <p>{{ comment }}</p>
+            {% if comment.user != request.user %}
+            <a href="{% url 'add_comment_second_level' item.pk %}"> Ответить </a>
+            {% else %}
+            <a href="{% url 'del_comment_second_level' comment.pk %}"> Удалить </a>
+            {% endif %}
+                </div>
+            {% endfor %}
+
+        </div>
+        <hr>
+    {% endfor %}
         {% endif %}
         <br>
         <!--Add Comment-->
