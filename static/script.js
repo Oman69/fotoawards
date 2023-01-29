@@ -8,7 +8,7 @@ if(get('ordering'))
     url.search = search_params.toString();
     var new_url = url.toString();
     return new_url
-  };
+  }
 
 
 
@@ -23,7 +23,7 @@ if(get('filtering'))
     url.search = search_params.toString();
     var new_url = url.toString();
     return new_url
-  };
+  }
 
 
 
@@ -37,7 +37,7 @@ if(get('user'))
     url.search = search_params.toString();
     var new_url = url.toString();
     return new_url
-  };
+  }
 
 
 document.getElementById('delete_comment').onclick = function() {

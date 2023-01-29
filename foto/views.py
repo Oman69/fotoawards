@@ -4,12 +4,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q, Count
 from .forms import FotoForm, CommentsForm, SubscribeForm, CommentsSecondLevelForm
 from .models import Foto, Category, Comments, User, CommentsSecondLevel
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage
 
 from .service import send
-from .tasks import send_spam_email, lazy_delete_foto, stop_deleting
+from .tasks import send_spam_email, lazy_delete_foto
 
 # Create your views here.
 PRODUCTS_PER_PAGE = 4
@@ -198,22 +198,18 @@ def edit_foto(request, foto_id):
             return render(request, 'foto/add_foto.html', {'foto': foto, 'form': form, 'error': 'Bad data!'})
 
 
-task_id =''
 
 #Удалить фотографию
 def delete_foto(request, foto_id):
     foto = get_object_or_404(Foto, pk=foto_id, user=request.user)
-    frozen = jsonpickle.encode(foto)
+    frozen = jsonpickle.encode({'foto_pk': foto.pk})
     if request.method == 'GET':
         foto.deleted = True
         foto.save()
-
         #Синхронное удаление
         #foto.delete()
         #Отложенное удаление фотографии через 60 секунд
-        abortable_async_result = lazy_delete_foto.apply_async((frozen, ), countdown=60)
-        task_id = abortable_async_result.task_id
-        print(task_id)
+        lazy_delete_foto.apply_async((frozen, ), countdown=60)
         return redirect('user')
 
 
@@ -223,7 +219,6 @@ def no_delete_foto(request, foto_id):
     if request.method == 'GET':
         foto.deleted = False
         foto.save()
-        stop_deleting(task_id)
         return redirect('user')
 
 
@@ -263,7 +258,7 @@ def delete_comment(request, comment_id):
     if request.method == 'GET':
         comment.delete()
         print('Deleted comment...')
-        return redirect('home')
+        return HttpResponse('Комментарий удален')
 
 
 def add_comment_second_level(request,comment_id):
