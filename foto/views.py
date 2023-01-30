@@ -255,10 +255,15 @@ def edit_comment(request, comment_id):
 
 def delete_comment(request, comment_id):
     comment = get_object_or_404(Comments, pk=comment_id, user=request.user)
-    if request.method == 'GET':
-        comment.delete()
-        print('Deleted comment...')
-        return HttpResponse('Комментарий удален')
+    comment.delete()
+    print('Deleted comment...')
+    return HttpResponse('Комментарий удален')
+
+def delete_comment_asinc(request):
+    comment = get_object_or_404(Comments, pk=request.GET.get('pk'), user=request.user)
+    comment.delete()
+    print('Deleted comment...')
+    return HttpResponse('Комментарий удален')
 
 
 def add_comment_second_level(request,comment_id):

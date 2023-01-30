@@ -49,8 +49,8 @@
         <h6>{{ item.user }} - {{ item.created|date:'SHORT_DATETIME_FORMAT' }}</h6>
         <p>{{ item.text }} </p>
         {% if item.user == request.user %}
-        <a href="{% url 'delete_comment' item.pk %}" > Удалить </a>
-        <button id="delete_comment"> Удалить</button>
+        <a href="{% url 'delete_comment' item.pk %}"> Удалить </a>
+        <a href="{% url 'delete_comment_asinc'%}" id='delete_comment'> Удалить </a>
         <br>
         <a href="{% url 'edit_comment' item.pk %}"> Редактировать </a>
         {% elif item.user != request.user %}

@@ -1,3 +1,17 @@
+console.log('Hello')
+document.getElementById('delete_comment').onclick = function() {
+  let requestObj = new XMLHttpRequest()
+  requestObj.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      console.log(this.responseText)
+    }
+  }
+  requestObj.open("GET", './')
+  requestObj.send()
+};
+
+
+
 if(get('ordering'))
   document.getElementById('placeholder').innerHTML = "Sort: " + document.getElementById(get('ordering')).innerHTML;
 
@@ -39,14 +53,3 @@ if(get('user'))
     return new_url
   };
 
-
-document.getElementById('delete_comment').onclick = function() {
-  let requestObj = new XMLHttpRequest()
-  requestObj.onreadystatechange = function() {
-    if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
-      alert(this.responseText)
-    }
-  }
-  requestObj.open("GET", '/delete/')
-  requestObj.send()
-};
