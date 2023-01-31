@@ -38,7 +38,7 @@ urlpatterns = [
     #Comments
     path('foto/<int:foto_id>/add_comment/', views.add_comment, name='add_comment'),
     path('comment/<int:comment_id>/delete/', views.delete_comment, name='delete_comment'),
-    path('delete/', views.delete_comment_asinc, name='delete_comment_asinc'),
+    path('delete/>', views.delete_comment_asinc, name='delete_comment_asinc'),
     path('comment/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),
     path('foto/<int:comment_id>/add_comment_second_level/', views.add_comment_second_level, name='add_comment_second_level'),
     path('foto/<int:comment_id>/del_comment_second_level/', views.del_comment_second_level, name='del_comment_second_level'),
