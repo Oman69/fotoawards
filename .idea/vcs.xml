@@ -4,6 +4,5 @@
     <mapping directory="$PROJECT_DIR$/../.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/django-allauth" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/xmlhttprequest" vcs="Git" />
   </component>
 </project>

@@ -6,7 +6,7 @@ else {
   console.log('jQuery НЕ подключен к странице')
 }
 
-
+/*
 document.getElementById('delete_comment').onclick = function() {
   let comment_id = $(this).attr('data-object-id');
   let url = `delete/${comment_id}/`;
@@ -20,10 +20,10 @@ document.getElementById('delete_comment').onclick = function() {
     }).done(
       function(){alert("Deleted");}).fail(function(){alert("Error");}
     ) 
-  };
+  };*/
 
 
-/*
+
 let csrftoken = '{{ csrf_token }}'
 
 document.getElementById('delete_comment').onclick = function(e) {
@@ -36,15 +36,15 @@ document.getElementById('delete_comment').onclick = function(e) {
   }
 
   
-  requestObj.open("DELETE", '/delete/')
-
+  requestObj.open("GET", 'delete/')
+  requestObj.setRequestHeader("X-CSRFToken", csrftoken)
   const formdata = new FormData()
 
   formdata.append('name', 'John')
   formdata.append('age', '17')
 
   requestObj.send(formdata)
-}; */
+}; 
 
 
 
