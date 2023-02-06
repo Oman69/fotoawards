@@ -236,9 +236,7 @@ def add_comment(request,foto_id):
             newcomment.user = request.user
             newcomment.foto_id = foto_id
             newcomment.save()
-
-            print('Form is working...')
-            return redirect('home')
+            return redirect('foto', foto_id)
         except ValueError:
             return render(request, 'foto/add_comment.html', {'form': CommentsForm(), 'error': 'Ошибка'})
 
@@ -260,19 +258,11 @@ def edit_comment(request, comment_id):
 def delete_comment(request, comment_id):
     if request.method == 'GET':
         comment = get_object_or_404(Comments, pk=comment_id, user=request.user)
-        print(request.GET)
         comment.delete()
         print('Deleted comment...')
         #return redirect('foto', foto)
-        return redirect('home')
-
-
-def delete_comment_asinc(request):
-    if request.method == 'DELETE':
-        print('Вошли в функцию')
-        comment = get_object_or_404(Comments, pk=request.GET.get('pk'), user=request.user)
-        comment.delete()
         return HttpResponse('Комментарий удален')
+
 
 
 def add_comment_second_level(request,comment_id):
@@ -297,7 +287,8 @@ def del_comment_second_level(request, comment_id):
     if request.method == 'GET':
         comment.delete()
         print('Deleted comment...')
-        return redirect('home')
+        return HttpResponse('Комментарий удален')
+        #return redirect('home')
 
 def search(request):
     if request.method == 'POST':

@@ -46,12 +46,21 @@
         {% else %}
         <h4 class="mg-h-10">Комментарии: {{ foto_id.comments.count }}</h4>
         {% for item in foto_id.comments.all %}
+
+        <div class="comment" id="card_{{ item.pk }}">
+
         <h6>{{ item.user }} - {{ item.created|date:'SHORT_DATETIME_FORMAT' }}</h6>
         <p>{{ item.text }} </p>
         {% if item.user == request.user %}
-        <a href="{% url 'delete_comment' item.pk %}"> Удалить </a>
-        <a id='delete_comment' data-object-id="{{ item.pk }}"> Удалить </a>
-        <br>
+        <!-- Синхронное удаление -->
+        <!--<a href="{% url 'delete_comment' item.pk %}"> Удалить </a>-->
+
+        <!-- Асинхронное удаление -->
+        <form action="{% url 'delete_comment' item.pk %}" method="get" id="delete_form_{{ item.pk }}">
+            {% csrf_token %}
+            <a href='' onclick="delete_comment({{ item.pk }})">Удалить</a>
+        </form>
+
         <a href="{% url 'edit_comment' item.pk %}"> Редактировать </a>
         {% elif item.user != request.user %}
         <a href="{% url 'add_comment_second_level' item.pk %}"> Ответить </a>
@@ -66,7 +75,10 @@
             {% if comment.user != request.user %}
             <a href="{% url 'add_comment_second_level' item.pk %}"> Ответить </a>
             {% else %}
-            <a href="{% url 'del_comment_second_level' comment.pk %}"> Удалить </a>
+                <form action="{% url 'del_comment_second_level' comment.pk %}" method="get" id="delete_form_{{ comment.pk }}">
+                {% csrf_token %}
+                <a href='' onclick="delete_comment({{ comment.pk }})">Удалить</a>
+                </form>
             {% endif %}
                 </div>
             {% endfor %}
@@ -74,10 +86,12 @@
         </div>
         <hr>
     {% endfor %}
+            </div>
         {% endif %}
         <br>
         <!--Add Comment-->
         {% if user.is_authenticated %}
+
         <a href="#popup_1" >Оставить комментарий</a>
 
         <!--<a href="{% url 'add_comment' foto_id.pk %}" id="Add_comment">Оставить комментарий</a>-->
@@ -111,4 +125,7 @@
 </div>
 </div>
 <div class="fix" id="fix"></div>
+<div class="info__add">
+    Кликни
+</div>
 {% endblock %}

@@ -29,6 +29,7 @@ class FotoSerializer(serializers.HyperlinkedModelSerializer):
     category = serializers.SlugRelatedField(slug_field='title', read_only=True)
     user = serializers.SlugRelatedField(slug_field='username', read_only=True)
 
+
 class FotoViewSet(viewsets.ModelViewSet):
     "Список фото"
     queryset = Foto.objects.all()
