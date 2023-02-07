@@ -51,7 +51,7 @@ def home(request):
 
 
 def category(request, category_id):
-    fotos = Foto.objects.filter(category_id=category_id)
+    fotos = Foto.objects.filter(category_id=category_id).annotate(comments_count=Count('comments'), voices_count=Count('voices'))
 
     # Сортировка
     sorting = request.GET.get('ordering', '')
@@ -158,6 +158,11 @@ def user(request):
         for item in filter_foto:
             if item.affected == True:
                 new_filter.append(item)
+    elif filtering == 'dismissed':
+        new_filter = []
+        for item in filter_foto:
+            if item.dismissed == True:
+                new_filter.append(item)
     else:
         new_filter = filter_foto
 
@@ -183,23 +188,28 @@ def add_foto(request):
             return render(request, 'foto/add_foto.html', {'form': FotoForm(), 'error': 'Ошибка при загрузке'})
 
 
+old_foto_image = 'Пустое значение'
+
 
 def edit_foto(request, foto_id):
     foto = get_object_or_404(Foto, pk=foto_id, user=request.user)
+    global old_foto_image
+    old_foto_image = foto.image_medium
     if request.method == 'GET':
         form = FotoForm(instance=foto)
-        return render(request, 'foto/add_foto.html', {'foto': foto, 'form': form})
+        return render(request, 'foto/edit_foto.html', {'foto': foto, 'form': form})
     else:
         try:
-            form = FotoForm(request.POST, instance=foto)
-            form.save()
-            print(foto.images, request.POST)
-            if foto.images != request.POST.get('images', False):
-                foto.affected = False
-                foto.save()
+            form = FotoForm(request.POST, request.FILES, instance=foto)
+            newfoto = form.save(commit=False)
+            print(old_foto_image, newfoto.images.url)
+            if old_foto_image != newfoto.image_medium:
+                newfoto.affected = False
+                newfoto.dismissed = False
+            newfoto.save()
             return redirect('user')
         except ValueError:
-            return render(request, 'foto/add_foto.html', {'foto': foto, 'form': form, 'error': 'Bad data!'})
+            return render(request, 'foto/edit_foto.html', {'foto': foto, 'form': form, 'error': 'Bad data!'})
 
 
 
@@ -211,9 +221,9 @@ def delete_foto(request, foto_id):
         foto.deleted = True
         foto.save()
         #Синхронное удаление
-        #foto.delete()
+        foto.delete()
         #Отложенное удаление фотографии через 60 секунд
-        lazy_delete_foto.apply_async((frozen, ), countdown=60)
+        #lazy_delete_foto.apply_async((frozen, ), countdown=60)
         return redirect('user')
 
 
@@ -226,7 +236,7 @@ def no_delete_foto(request, foto_id):
         return redirect('user')
 
 
-def add_comment(request,foto_id):
+def add_comment(request, foto_id):
     if request.method == 'GET':
         return render(request, 'foto/add_comment.html', {'form': CommentsForm()})
     else:
@@ -236,7 +246,8 @@ def add_comment(request,foto_id):
             newcomment.user = request.user
             newcomment.foto_id = foto_id
             newcomment.save()
-            return redirect('foto', foto_id)
+            return HttpResponseRedirect(reverse('foto', args=[str(foto_id)]))
+
         except ValueError:
             return render(request, 'foto/add_comment.html', {'form': CommentsForm(), 'error': 'Ошибка'})
 
@@ -325,21 +336,22 @@ def moderation(request):
     users = User.objects.all()
     #Фильтрация
     filtering = request.GET.get('filtering', '')
-
+    new_filter = []
     if filtering == 'on_moderation':
-        new_filter = []
         for item in fotos:
             if item.affected == False:
                 new_filter.append(item)
     elif filtering == 'on_delete':
-        new_filter = []
         for item in fotos:
             if item.deleted == True:
                 new_filter.append(item)
     elif filtering == 'accepted':
-        new_filter = []
         for item in fotos:
             if item.affected == True:
+                new_filter.append(item)
+    elif filtering == 'dismissed':
+        for item in fotos:
+            if item.dismissed == True:
                 new_filter.append(item)
     else:
         new_filter = fotos
@@ -349,8 +361,6 @@ def moderation(request):
     user = request.GET.get('user', '')
     if user:
         new_filter = Foto.objects.filter(user=user)
-    else:
-        print('Вывод всех фото')
 
     # Добавляем контекст
     context = {'Fotos': new_filter, 'Users': users}
@@ -361,6 +371,7 @@ def approve(request, foto_id):
     foto = get_object_or_404(Foto, pk=foto_id)
     if request.method == 'GET':
         foto.affected = True
+        foto.dismissed = False
         foto.save()
         print('Foto approved...')
         return redirect('moderation')
@@ -370,6 +381,30 @@ def dismiss(request, foto_id):
     foto = get_object_or_404(Foto, pk=foto_id)
     if request.method == 'GET':
         foto.dismissed = True
+        foto.affected = False
         foto.save()
         print('Foto dismissed...')
         return redirect('moderation')
+
+
+
+def foto_moderation(request, foto_id):
+    print(old_foto_image)
+    if request.method == 'GET':
+        foto_id = Foto.objects.get(pk=foto_id)
+        categories = Category.objects.all()
+        commentsSecond = CommentsSecondLevel.objects.filter(pk=foto_id.pk)
+        stuff = get_object_or_404(Foto, id=foto_id.pk)
+        total_voices = stuff.total_voices()
+        liked = False
+        if stuff.voices.filter(id=request.user.id):
+            liked = True
+        context = {
+            'old_foto': old_foto_image,
+            'categories': categories,
+            'foto_id': foto_id,
+            'total_voices': total_voices,
+            'liked': liked,
+            'commentsSecond': commentsSecond,
+        }
+        return render(request, 'foto/foto_moderation.html', context)

@@ -181,3 +181,15 @@ margin: 20px 0;
     padding-left: 20px;
 
 }
+
+
+.moder_btn > .btn {
+    --bs-btn-padding-x: 4rem;
+}
+
+
+.two_img {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 30px;
+}

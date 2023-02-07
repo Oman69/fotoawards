@@ -9,9 +9,13 @@
   <div class="col-md-3">
     <div class="card" style="width: 18rem;">
 
-  <img src="{{ item.images.url }}" class="card-img-top" alt="{{ item.title}}">
+  <img src="{{ item.image_medium.url }}" class="card-img-top" alt="{{ item.title}}">
       <div class="mask">
-        <p class="card-text fs-6 ">{{ item.description|truncatechars:100 }}
+          {% if item.description %}
+          <p class="card-text fs-6 ">{{ item.description|truncatechars:100 }} </p>
+          {% else%}
+          <p class="card-text fs-6 ">Здесь должно быть описание картинки</p>
+          {% endif %}
       </div>
   <div class="card-body">
     <p class="card-text">Категория: {{ item.category }} </p>
@@ -21,6 +25,9 @@
       {% endif %}
       {% if item.deleted %}
       <p style="color: var(--bs-red);"> На удалении</p>
+      {% endif %}
+      {% if item.dismissed %}
+      <p style="color: var(--bs-red);"> Отклонено</p>
       {% endif %}
 
     <span class="card-text fs-4">{{ item.total_voices }}

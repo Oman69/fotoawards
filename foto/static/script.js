@@ -7,6 +7,21 @@ else {
 }
 
 
+
+function add_comment(id) {
+  $.ajax({
+      type: $('#add_form_'+id).attr('method'),
+      url: $('#add_form_'+id).attr('action'),
+      data: $('#add_form_'+id).serialize(),
+      success: function () {
+          // alert('Комментарий добавлен')
+          location.reload();
+          
+      }
+  });
+}
+
+
 function delete_comment(id) {
   $.ajax({
       type: $('#delete_form_'+id).attr('method'),
@@ -22,13 +37,11 @@ function delete_comment(id) {
 }
 
 
-for (let i = 0; i < 5; i++) {
   $('.info__add').click(function() {
     $(this).parent().append($('<div>', {
-      'text': i
+      'text': 'Click...'
     }));
   });
-}
 
 
 

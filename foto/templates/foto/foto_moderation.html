@@ -1,0 +1,44 @@
+{% extends 'foto/base.html' %}
+{% load static %}
+{% block title %} Модерация: {{foto_id.title}} {% endblock%}
+{% block h1%} Модерация: {{foto_id.title}} {%endblock%}
+{% block main_content %}
+    <div class="col-md-9">
+        {% if not foto_id.affected %}
+        <div class="two_img">
+            <div>
+                <img src="{{ foto_id.image_medium.url }}" class="card-img-top" alt="{{ item.title }}">
+                <h3>Новое фото</h3>
+            </div>
+            <div>
+                <img src="{{ old_foto.url }}" class="card-img-top" alt="{{ item.title}}">
+                <h3>Старое фото</h3>
+            </div>
+            </div>
+        {% else %}
+            <img src="{{ foto_id.images.url }}" class="card-img-top" alt="{{ item.title }}">
+        {% endif %}
+      <div class="card-body" style="margin: 20px 0;">
+        <h5 class="card-text">Категория: {{ foto_id.category }}</h5>
+        <h5 class="card-text">Aвтор: {{ foto_id.user }}</h5>
+          <h5 class="card-text">Добавлено: {{ foto_id.add_data|date:"M d, Y" }}</h5>
+      </div>
+        <p class="card-text fs-6 ">{{ foto_id.description }}</p>
+
+    </div>
+<div class="moder_btn">
+ {% if not foto_id.affected %}
+
+
+                <a href="{% url 'approve' foto_id.id %}" class="btn btn-success">Одобрить</a>
+
+                <a href="{% url 'dismiss' foto_id.id %}" class="btn btn-danger">Отклонить</a>
+
+
+        {% else %}
+
+          <p style="color: var(--bs-green); font-size: 18px;">Фотография одобрена к размещению на сайте.</p>
+
+          {% endif %}
+</div>
+{% endblock %}

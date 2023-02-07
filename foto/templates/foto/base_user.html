@@ -18,11 +18,12 @@
         {% else%}
         <p>Привет, {{user}}.
         {% endif %}
-        {% if user.is_staff %}
-                <strong>Вы вошли как администратор.</strong>
-        {% endif %}
+
         Это твой личный кабинет. В этом разделе размещаются твои загруженные фотографии.<br> Здесь ты можешь добавлять или удалять свои фотографии.</p>
     </span>
+              {% if user.is_staff %}
+                <strong>Вы вошли как администратор.</strong>
+        {% endif %}
               <div class="mg-h-10">
                <select name="filtering" id="filtering" onchange="location = finalurl2();" style="margin-left: auto;">
                     <option value="" id="placeholder" disabled selected hidden>Фильтры</option>
@@ -30,6 +31,7 @@
                     <option id="on_moderation" value="on_moderation">На модерации</option>
                     <option id="on_delete" value="on_delete">На удалении</option>
                     <option id="accepted" value="accepted">Одобренные</option>
+                   <option id="dismissed" value="dismissed">Отклонено</option>
                   </select>
           </div>
           </div>

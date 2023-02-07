@@ -9,7 +9,7 @@
   <div class="col-md-3">
     <div class="card " style="width: 18rem;">
 
-  <img src="{{ item.images.url }}" class="card-img-top" alt="{{ item.title}}">
+  <img src="{{ item.image_medium.url }}" class="card-img-top" alt="{{ item.title}}">
       <div class="mask">
           {% if item.description %}
           <p class="card-text fs-6 ">{{ item.description|truncatechars:100 }} </p>

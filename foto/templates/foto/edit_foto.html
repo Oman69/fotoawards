@@ -1,0 +1,15 @@
+{% extends 'foto/base_user.html' %}
+{% load static %}
+{% block title %} Изменить фото {% endblock %}
+{% block h1%} Изменить фото {%endblock%}
+{% block main_content %}
+
+    <span style="color:red; font-weight: bold">{{ error }}</span>
+    <form enctype='multipart/form-data' method="POST">
+        {% csrf_token %}
+       {{form.as_p}}
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+
+
+{% endblock%}

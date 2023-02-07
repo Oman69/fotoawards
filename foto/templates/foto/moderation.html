@@ -1,7 +1,7 @@
 {% extends 'foto/base_user.html' %}
 {% load static %}
 {% block title %} Панель модератора {% endblock %}
-{% block h1%} Все фотографии {%endblock%}
+{% block h1 %} Модерация фотографий {% endblock %}
 {% block main_content %}
 
             <div class="mg-h-10">
@@ -13,23 +13,26 @@
                    {%endfor%}
                   </select>
 
-               <select name="filtering" id="filtering" onchange="location = finalurl2();" style="margin-left: auto;">
-                    <option value="" id="placeholder2" disabled selected hidden>Фильтры</option>
-                   <option id="no_filter" value="no_filter">Все фото</option>
-                    <option id="on_moderation" value="on_moderation">На модерации</option>
-                    <option id="on_delete" value="on_delete">На удалении</option>
-                    <option id="accepted" value="accepted">Одобренные</option>
-                  </select>
+<!--               <select name="filtering" id="filtering" onchange="location = finalurl2();" style="margin-left: auto;">-->
+<!--                    <option value="" id="placeholder2" disabled selected hidden>Фильтры</option>-->
+<!--                   <option id="no_filter" value="no_filter">Все фото</option>-->
+<!--                    <option id="on_moderation" value="on_moderation">На модерации</option>-->
+<!--                    <option id="on_delete" value="on_delete">На удалении</option>-->
+<!--                    <option id="accepted" value="accepted">Одобренные</option>-->
+<!--                  </select>-->
             </div>
 
 {% for item in Fotos %}
-    {% if not item.dismissed %}
   <div class="col-md-3">
     <div class="card" style="width: 18rem;">
 
-  <img src="{{ item.images.url }}" class="card-img-top" alt="{{ item.title}}">
+  <img src="{{ item.image_medium.url }}" class="card-img-top" alt="{{ item.title}}">
       <div class="mask">
-        <p class="card-text fs-6 ">{{ item.description|truncatechars:100 }}
+          {% if item.description %}
+          <p class="card-text fs-6 ">{{ item.description|truncatechars:100 }} </p>
+          {% else%}
+          <p class="card-text fs-6 ">Здесь должно быть описание картинки</p>
+          {% endif %}
       </div>
   <div class="card-body">
     <p class="card-text">Категория: {{ item.category }} </p>
@@ -41,6 +44,9 @@
       {% endif %}
       {% if item.deleted %}
       <p style="color: var(--bs-red);"> На удалении</p>
+      {% endif %}
+      {% if item.dismissed %}
+      <p style="color: var(--bs-red);"> Отклонено</p>
       {% endif %}
 
     <span class="card-text fs-4">{{ item.total_voices }}
@@ -57,7 +63,7 @@
     </span>
       <div class="user_block">
           <div class="mg-h-10">
-          <a href="{% url 'foto' item.id %}" class="btn btn-primary">Посмотреть</a>
+          <a href="{% url 'foto_moderation' item.id %}" class="btn btn-primary">Посмотреть</a>
       </div>
           {% if not item.affected %}
           <div class="mg-h-10">
@@ -76,7 +82,6 @@
   </div>
 </div>
 </div>
-{% endif %}
 {% endfor %}
 
 

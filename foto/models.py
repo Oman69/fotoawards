@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from imagekit.models.fields import ImageSpecField
+from imagekit.processors import Adjust,ResizeToFit, ResizeToFill
 
 from foto.validators import validate_image
 
@@ -13,11 +15,13 @@ class Foto(models.Model):
     description = models.TextField(max_length=1000, verbose_name='Описание', blank=True, null=True)
     add_data = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления')
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор')
-    category = models.ForeignKey('Category', on_delete=models.DO_NOTHING, verbose_name='Категория', default='Без категории')
+    category = models.ForeignKey('Category', on_delete=models.DO_NOTHING, verbose_name='Категория', null=True, default=4)
     affected = models.BooleanField(default=False, verbose_name='Одобрено')
     images = models.ImageField(upload_to='media', verbose_name='Фотография')
+    image_medium = ImageSpecField([Adjust(contrast=1.1, sharpness=1.0),
+            ResizeToFill(200, 200)], format='JPEG', options={'quality': 90})
     voices = models.ManyToManyField(User, related_name='foto_voices', verbose_name='Голоса', blank=True)
-    deleted = models.BooleanField(default=False, verbose_name='Удалено')
+    deleted = models.BooleanField(default=False, verbose_name='На удалении')
     dismissed = models.BooleanField(default=False, verbose_name='Отклонено')
 
 

@@ -54,6 +54,7 @@ urlpatterns = [
     re_path(r'^auth/', include('djoser.urls.authtoken')),
     #Moderation
     path('moderation/', views.moderation, name='moderation'),
+    path('moderation/<int:foto_id>/', views.foto_moderation, name='foto_moderation'),
     path('moderation/<int:foto_id>/approve_foto/', views.approve, name='approve'),
     path('moderation/<int:foto_id>/dismiss_foto/', views.dismiss, name='dismiss'),
 
