@@ -4,7 +4,8 @@
             "src": "fotoawards/wsgi.py",
             "use": "@vercel/python",
             "config": {
-                "excludeFiles": "**/*.html",
+                "excludeFiles": "**",
+                "includeFiles": "fotoawards/**",
                 "maxLambdaSize": "15mb",
                 "runtime": "python3.9"
             }
