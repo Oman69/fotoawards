@@ -15,13 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
+
+from chat import urls as chat_urls
 from foto import views
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework import routers, serializers, viewsets
-from django.contrib.auth.models import User
-
-from foto.models import Foto
 from foto.serializers import router
 
 urlpatterns = [
@@ -57,5 +55,6 @@ urlpatterns = [
     path('moderation/<int:foto_id>/', views.foto_moderation, name='foto_moderation'),
     path('moderation/<int:foto_id>/approve_foto/', views.approve, name='approve'),
     path('moderation/<int:foto_id>/dismiss_foto/', views.dismiss, name='dismiss'),
+    path('chat/', include(chat_urls))
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

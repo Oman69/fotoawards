@@ -27,12 +27,13 @@ SECRET_KEY = 'django-insecure-h!)%8++#&_-w%3l+o^9n+_z-a4e4x$27t6-4*2ip!&%nwi4ngd
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,6 +52,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'imagekit',
+    'channels',
+    'chat',
+
 ]
 
 SITE_ID = 1
@@ -102,6 +106,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'fotoawards.wsgi.application'
+ASGI_APPLICATION = "fotoawards.asgi.application"
 
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
