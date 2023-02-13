@@ -1,5 +1,6 @@
 # chat/consumers.py
 import json
+import threading
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
@@ -31,6 +32,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # Receive message from room group
     async def chat_message(self, event):
         message = event["message"]
-
+        print(f'websocket:{str(threading.get_native_id())}')
         # Send message to WebSocket
         await self.send(text_data=json.dumps({"message": message}))
